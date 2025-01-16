@@ -1,0 +1,6 @@
+{
+    "cmake.debugConfig": {
+        //  디버그 모드에서 현재 작업 디렉터리로 워크스페이스 폴더를 설정
+        "cwd": "${workspaceFolder}"
+    }
+}

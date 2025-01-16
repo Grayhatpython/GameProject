@@ -1,0 +1,25 @@
+syntax = "proto3";
+package Protocol;
+
+import "Enum.proto";
+
+//	DB ID
+//	InGame ID
+//	DataSheet ID
+
+message PositionInfo
+{
+	uint32		objectId = 1;
+	float		x = 2;
+	float		y = 3;
+	float		z = 4;
+	float		yaw = 5;
+	MoveState	state = 6;
+}
+
+message ObjectInfo
+{
+	uint32			objectId = 1;
+	ObjectType		objectType = 2;
+	PositionInfo	positionInfo = 3;
+}
