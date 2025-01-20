@@ -35,9 +35,14 @@ bool Program::IsProgramLink(const std::vector<std::shared_ptr<Shader>>& shaders)
 		char infoLog[MAX_LOG_INFO_LENGTH];
 		glGetProgramInfoLog(_program, MAX_LOG_INFO_LENGTH, nullptr, infoLog);
 
-		SPDLOG_ERROR("Failed to link Program infoLog : {}", infoLog);
+		// ¡÷ºÆ
 		return false;
 	}
 
 	return true;
+}
+
+void Program::UseProgram() const
+{
+	glUseProgram(_program);
 }

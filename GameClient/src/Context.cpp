@@ -113,8 +113,10 @@ void Context::Render()
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(_program->GetID());
-	glDrawArrays(GL_POINTS, 0, 1);
+	_program->UseProgram();
+
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void Context::ProcessInput(GLFWwindow* window)
@@ -145,14 +147,32 @@ bool Context::Initialize()
 	//GetCurrentDirectory(MAX_PATH, buffer);
 
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
+		0.5f, 0.5f, 0.0f,
 		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
+		-0.5f, 0.5f, 0.0f
 	};
 
-	glGenBuffers(1, &_vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9, vertices, GL_STATIC_DRAW);
+	uint32_t indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	// 정점이 3개, 각 정점의 위치, 위치에 대해 x/y/z 값, 각 좌표값마다 float(4byte) 크기, 정점 간의 간격이 12bytes
+	// vertexBuffer object가 가진 정점에 대한 구조를 알려줘야 한다!
+
+	// Vertex Arrray Object (VAO) 
+	// 정점 데이터의 구조를 알려주는 object
+
+	_vertexLayout = VertexLayout::Create();
+
+	_vertexBuffer = Buffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(vertices));
+	assert(_vertexBuffer);
+
+	_vertexLayout->EnableVertexAttribArray(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+
+	_indexBuffer = Buffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(indices));
+	assert(_indexBuffer);
 
 	{
 		std::shared_ptr<Shader> vertexShader = Shader::CreateFromFile("../shader/simple.vs", GL_VERTEX_SHADER);
@@ -160,21 +180,13 @@ bool Context::Initialize()
 		if (vertexShader == nullptr || fragmentShader == nullptr)
 			return false;
 
-		SPDLOG_INFO("Vertex Shader Id : {}", vertexShader->GetID());
-		SPDLOG_INFO("Fragment Shader Id : {}", fragmentShader->GetID());
-
 		_program = Program::Create({ fragmentShader, vertexShader });
 		if (_program == nullptr)
 			return false;
 
-		SPDLOG_INFO("Program Id : {}", _program->GetID());
 	}
 
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-
-	uint32_t vao = 0;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
 
 	return true;
 }

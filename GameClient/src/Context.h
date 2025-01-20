@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Buffer.h"
 #include "Program.h"
+#include "VertexLayout.h"
 #include <filesystem>
 
 class Context
@@ -28,7 +30,11 @@ private:
 	int _width{ WINDOW_WIDTH };
 	int _height{ WINDOW_HEIGHT };
 
-	uint32_t	_vertexBuffer{ 0 };
+	
+	std::unique_ptr<Buffer> _vertexBuffer;
+	std::unique_ptr<Buffer> _indexBuffer;
+
+	std::unique_ptr<VertexLayout> _vertexLayout;
 
 	//	File Explorer
 	std::filesystem::path	_currentPath;

@@ -8,6 +8,7 @@ set(DEP_EXTERNAL_DIR ${PROJECT_BINARY_DIR}/external)
 set(DEP_INCLUDE_DIR ${DEP_EXTERNAL_DIR}/include)
 set(DEP_LIB_DIR ${DEP_EXTERNAL_DIR}/lib)
 
+#[[
 # spdlog: fast logger library
 ExternalProject_Add(
     dep-spdlog
@@ -24,6 +25,7 @@ ExternalProject_Add(
 set(DEP_LIST ${DEP_LIST} dep-spdlog)
 # Config Debug -> spdlogd.lib ( build Time )
 set(DEP_LIBS ${DEP_LIBS} spdlog$<$<CONFIG:Debug>:d>)
+#]]
 
 # glfw
 ExternalProject_Add(
@@ -120,7 +122,6 @@ add_library(imgui
 target_include_directories(imgui PRIVATE ${DEP_INCLUDE_DIR})
 add_dependencies(imgui ${DEP_LIST})
 
-# CMAKE_CURRENT_SOURCE_DIR -> build/imgui/
 set(DEP_INCLUDE_DIR ${DEP_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
 
 set(DEP_LIST ${DEP_LIST} imgui)
@@ -143,6 +144,7 @@ add_dependencies(implot imgui)
 target_link_libraries(implot PRIVATE imgui)
 
 # protobuf
+# 클라이언트 작업 후에 서버랑 연동 시에 수정 필요...
 set(PROTOBUF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/protobuf)
 set(PROTOC_BIN_DIR ${PROTOBUF_INCLUDE_DIR}/protoc)
 set(PROTOBUF_LIB_DIR ${PROTOBUF_INCLUDE_DIR}/lib)

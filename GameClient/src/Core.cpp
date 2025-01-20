@@ -28,13 +28,11 @@ Core::~Core()
 
 bool Core::Initialize()
 {
-    SPDLOG_INFO("GLFW Initialize");
 
     if (::glfwInit() == GLFW_FALSE)
     {
         const char* errorMsg = nullptr;
         ::glfwGetError(&errorMsg);
-        SPDLOG_ERROR("Failed to initialize glfw : {}", errorMsg);
         return false;
     }
 
@@ -43,12 +41,10 @@ bool Core::Initialize()
     ::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //::glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    SPDLOG_INFO("GLFW CreateWindow");
 
     _window = ::glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
     if (_window == nullptr)
     {
-        SPDLOG_ERROR("Failed to create window glfw");
         ::glfwTerminate();
         return false;
     }
@@ -57,13 +53,11 @@ bool Core::Initialize()
 
     if (!::gladLoadGLLoader((GLADloadproc)::glfwGetProcAddress))
     {
-        SPDLOG_ERROR("Failed to Load Glad");
         ::glfwTerminate();
         return false;
     }
 
     auto version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    SPDLOG_INFO("Opengl Version : {}", version);
 
     IMGUI_CHECKVERSION();
     _imguiContext = ImGui::CreateContext();
@@ -87,7 +81,6 @@ bool Core::Initialize()
     _context = Context::Create();
     if (_context == nullptr)
     {
-        SPDLOG_ERROR("Failed to create context");
         ::glfwTerminate();
         return false;
     }
@@ -105,8 +98,6 @@ bool Core::Initialize()
 
 void Core::Update()
 {
-    SPDLOG_INFO("Update");
-
     while (!::glfwWindowShouldClose(_window))
     {
         //  Poll
@@ -133,7 +124,6 @@ void Core::Update()
 
 void Core::OnFramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    SPDLOG_INFO("Gl ViewPort Changed : {} x {}", width, height);
     auto context = reinterpret_cast<Context*>(::glfwGetWindowUserPointer(window));
     context->RefrechViewPort(width, height);
 }
@@ -142,9 +132,9 @@ void Core::OnKeyCallback(GLFWwindow* window, int key, int scancode, int action, 
 {
     ::ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 
-    SPDLOG_INFO("Keyboard Event - [ key : {}, scancode : {}, action : {}, mods : {}{}{}", key, scancode,
+    /*SPDLOG_INFO("Keyboard Event - [ key : {}, scancode : {}, action : {}, mods : {}{}{}", key, scancode,
         action == GLFW_PRESS ? "Pressed" : action == GLFW_RELEASE ? "Released" : action == GLFW_REPEAT ? "Repeat" : "Unknown",
-        mods & GLFW_MOD_CONTROL ? "Ctrl" : "_", mods & GLFW_MOD_SHIFT ? "Shift" : "_", mods & GLFW_MOD_ALT ? "Alt" : "_");
+        mods & GLFW_MOD_CONTROL ? "Ctrl" : "_", mods & GLFW_MOD_SHIFT ? "Shift" : "_", mods & GLFW_MOD_ALT ? "Alt" : "_");*/
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         ::glfwSetWindowShouldClose(window, true);

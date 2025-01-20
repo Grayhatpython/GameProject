@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(PROJECT_NAME Profiler)
+set(PROJECT_NAME GameClient)
 set(CMAKE_CXX_STANDARD 17)
 
 # 실행 파일은 빌드 디렉토리 안에 bin 폴더에 출력.
@@ -16,12 +16,13 @@ set(CMAKE_VERBOSE_MAKEFILE true)
 
 add_executable(${PROJECT_NAME}   
     src/main.cpp
-    src/Context.cpp         src/Context.h
-    src/Core.cpp            src/Core.h
-    src/Shader.cpp          src/Shader.h
-    src/Utility.cpp         src/Utility.h
-    src/Program.cpp         src/Program.h
-    src/Enum.pb.cc          src/Enum.pb.h
+    src/Context.cpp             src/Context.h
+    src/Core.cpp                src/Core.h
+    src/Shader.cpp              src/Shader.h
+    src/Utility.cpp             src/Utility.h
+    src/Program.cpp             src/Program.h
+    src/Buffer.cpp              src/Buffer.h
+    src/VertexLayout.cpp        src/VertexLayout.h
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC src/pch.h)

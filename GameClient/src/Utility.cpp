@@ -9,7 +9,7 @@ std::optional<std::string> Utility::LoadTextFromFile(const std::string& fileName
 
 	if (fs.is_open() == false)
 	{
-		SPDLOG_ERROR("Failed to open File : {}", fileName);
+		// ¡÷ºÆ
 		return {};
 	}
 

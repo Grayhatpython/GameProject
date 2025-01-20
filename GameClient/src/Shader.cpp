@@ -25,8 +25,7 @@ bool Shader::IsLoadFromFile(const std::string& fileName, GLenum shaderType)
 		char infoLog[MAX_LOG_INFO_LENGTH];
 		glGetShaderInfoLog(_shader, MAX_LOG_INFO_LENGTH, nullptr, infoLog);
 
-		SPDLOG_ERROR("Failed to compile shader : \"{}\"", fileName);
-		SPDLOG_ERROR("InfoLog : {}", infoLog);
+		// ¡÷ºÆ
 		return false;
 	}
 

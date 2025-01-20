@@ -9,8 +9,10 @@ public:
 
 private:
 	Program() = default;
-
 	bool IsProgramLink(const std::vector<std::shared_ptr<Shader>>& shaders);
+
+public:
+	void UseProgram() const;
 
 public:
 	uint32_t GetID() const { return _program; }
