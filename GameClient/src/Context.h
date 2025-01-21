@@ -3,6 +3,7 @@
 #include "Buffer.h"
 #include "Program.h"
 #include "VertexLayout.h"
+#include "Texture.h"
 #include <filesystem>
 
 class Context
@@ -30,11 +31,16 @@ private:
 	int _width{ WINDOW_WIDTH };
 	int _height{ WINDOW_HEIGHT };
 
-	
+	//	Buffer
 	std::unique_ptr<Buffer> _vertexBuffer;
 	std::unique_ptr<Buffer> _indexBuffer;
 
+	//	layout
 	std::unique_ptr<VertexLayout> _vertexLayout;
+
+	//	texture
+	std::unique_ptr<Texture> _texture;
+	std::unique_ptr<Texture> _texture2;
 
 	//	File Explorer
 	std::filesystem::path	_currentPath;

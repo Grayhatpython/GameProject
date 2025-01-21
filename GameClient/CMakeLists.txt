@@ -23,6 +23,8 @@ add_executable(${PROJECT_NAME}
     src/Program.cpp             src/Program.h
     src/Buffer.cpp              src/Buffer.h
     src/VertexLayout.cpp        src/VertexLayout.h
+    src/Image.cpp               src/Image.h
+    src/Texture.cpp             src/Texture.h
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC src/pch.h)
