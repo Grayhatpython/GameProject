@@ -46,3 +46,15 @@ void Program::UseProgram() const
 {
 	glUseProgram(_program);
 }
+
+void Program::SetUniform(const std::string& name, int value) const
+{
+	auto uniformLocation = glGetUniformLocation(_program, name.c_str());
+	glUniform1i(uniformLocation, value);
+}
+
+void Program::SetUniform(const std::string& name, const glm::mat4& value) const
+{
+	auto uniformLocation = glGetUniformLocation(_program, name.c_str());
+	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(value));
+}

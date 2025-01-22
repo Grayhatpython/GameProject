@@ -85,15 +85,21 @@ bool Core::Initialize()
         return false;
     }
 
+    InitializeEventCallback();
+
+	return true;
+}
+
+void Core::InitializeEventCallback()
+{
     ::glfwSetWindowUserPointer(_window, _context.get());
-    ::glfwSetFramebufferSizeCallback(_window, Core::OnFramebufferSizeCallback);
-    ::glfwSetKeyCallback(_window, Core::OnKeyCallback);
+
+    ::glfwSetFramebufferSizeCallback(_window, OnFramebufferSizeCallback);
+    ::glfwSetKeyCallback(_window, OnKeyCallback);
     ::glfwSetCursorPosCallback(_window, OnCursorPosCallback);
     ::glfwSetMouseButtonCallback(_window, OnMouseButtonCallback);
     ::glfwSetCharCallback(_window, OnCharCallback);
     ::glfwSetScrollCallback(_window, OnScrollCallback);
-
-	return true;
 }
 
 void Core::Update()
@@ -107,7 +113,7 @@ void Core::Update()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        //_context->ProcessInput(_window);
+        _context->ProcessInput(_window);
 
         //  Render
         _context->Render();
@@ -125,7 +131,7 @@ void Core::Update()
 void Core::OnFramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     auto context = reinterpret_cast<Context*>(::glfwGetWindowUserPointer(window));
-    context->RefrechViewPort(width, height);
+    context->RefreshViewPort(width, height);
 }
 
 void Core::OnKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

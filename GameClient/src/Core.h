@@ -13,6 +13,9 @@ public:
 public:
 	bool Initialize();
 
+private:
+	void InitializeEventCallback();
+
 public:
 	void Update();
 

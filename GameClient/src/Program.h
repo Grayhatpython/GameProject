@@ -15,6 +15,9 @@ public:
 	void UseProgram() const;
 
 public:
+	void	SetUniform(const std::string& name, int value) const;
+	void	SetUniform(const std::string& name, const glm::mat4& value) const;
+
 	uint32_t GetID() const { return _program; }
 
 private:
