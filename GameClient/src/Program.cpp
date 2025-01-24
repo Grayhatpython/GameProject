@@ -11,6 +11,16 @@ std::unique_ptr<Program> Program::Create(const std::vector<std::shared_ptr<Shade
 	return std::move(program);
 }
 
+std::unique_ptr<Program> Program::Create(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+{
+	std::shared_ptr<Shader> vs = Shader::CreateFromFile(vertexShaderFilename,GL_VERTEX_SHADER);
+	std::shared_ptr<Shader> fs = Shader::CreateFromFile(fragmentShaderFilename,GL_FRAGMENT_SHADER);
+	if (vs == nullptr || fs == nullptr)
+		return nullptr;
+
+	return std::move(Create({ vs, fs }));
+}
+
 Program::~Program()
 {
 	if (_program)
@@ -51,6 +61,21 @@ void Program::SetUniform(const std::string& name, int value) const
 {
 	auto uniformLocation = glGetUniformLocation(_program, name.c_str());
 	glUniform1i(uniformLocation, value);
+}
+
+void Program::SetUniform(const std::string& name, float value) const {
+	auto uniformLocation = glGetUniformLocation(_program, name.c_str());
+	glUniform1f(uniformLocation, value);
+}
+
+void Program::SetUniform(const std::string& name, const glm::vec3& value) const {
+	auto uniformLocation = glGetUniformLocation(_program, name.c_str());
+	glUniform3fv(uniformLocation, 1, glm::value_ptr(value));
+}
+
+void Program::SetUniform(const std::string& name,const glm::vec4& value) const {
+	auto uniformLocation = glGetUniformLocation(_program, name.c_str());
+	glUniform4fv(uniformLocation, 1, glm::value_ptr(value));
 }
 
 void Program::SetUniform(const std::string& name, const glm::mat4& value) const

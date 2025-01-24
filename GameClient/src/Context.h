@@ -26,6 +26,9 @@ private:
 
 private:
 	std::unique_ptr<Program>	_program;
+	//	light
+	std::unique_ptr<Program>	_program2;
+
 	glm::vec4 _clearColor{ glm::vec4(0.3f, 0.3f, 0.3f, 0.0f) };
 	
 	int _width{ WINDOW_WIDTH };
@@ -52,6 +55,27 @@ private:
 
 	bool		_cameraControl{ false };
 	glm::vec2	_prevMousePos{ glm::vec2{0.0f} };
+
+	// lighting
+	// light parameter
+	struct Light {
+		glm::vec3 position{ glm::vec3(3.0f, 3.0f, 3.0f) };
+		glm::vec3 ambient{ glm::vec3(0.1f, 0.1f, 0.1f) };
+		glm::vec3 diffuse{ glm::vec3(0.5f, 0.5f, 0.5f) };
+		glm::vec3 specular{ glm::vec3(1.0f, 1.0f, 1.0f) };
+	};
+	Light _light;
+
+	// material parameter
+	struct Material {
+		std::unique_ptr<Texture> diffuse;
+		std::unique_ptr<Texture> specular;
+		float shininess{ 32.0f };
+	};
+	Material _material;
+
+	// animation
+	bool		_animation{ true };
 
 	//	File Explorer
 	std::filesystem::path	_currentPath;
