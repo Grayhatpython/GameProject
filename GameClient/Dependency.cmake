@@ -8,7 +8,6 @@ set(DEP_EXTERNAL_DIR ${PROJECT_BINARY_DIR}/external)
 set(DEP_INCLUDE_DIR ${DEP_EXTERNAL_DIR}/include)
 set(DEP_LIB_DIR ${DEP_EXTERNAL_DIR}/lib)
 
-#[[
 # spdlog: fast logger library
 ExternalProject_Add(
     dep-spdlog
@@ -17,15 +16,12 @@ ExternalProject_Add(
     GIT_SHALLOW 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
-    TEST_COMMAND ""
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_EXTERNAL_DIR}
+    TEST_COMMAND ""
 )
-
 # Dependency 리스트 및 라이브러리 파일 리스트 추가
 set(DEP_LIST ${DEP_LIST} dep-spdlog)
-# Config Debug -> spdlogd.lib ( build Time )
 set(DEP_LIBS ${DEP_LIBS} spdlog$<$<CONFIG:Debug>:d>)
-#]]
 
 # glfw
 ExternalProject_Add(
@@ -106,6 +102,29 @@ ExternalProject_Add(
   )
 
 set(DEP_LIST ${DEP_LIST} dep-glm)
+
+# assimp
+ExternalProject_Add(
+  dep-assimp
+  GIT_REPOSITORY "https://github.com/assimp/assimp"
+  GIT_TAG "v5.0.1"
+  GIT_SHALLOW 1
+  UPDATE_COMMAND ""
+  PATCH_COMMAND ""
+  CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${DEP_EXTERNAL_DIR}
+      -DBUILD_SHARED_LIBS=OFF
+      -DASSIMP_BUILD_ASSIMP_TOOLS=OFF
+      -DASSIMP_BUILD_TESTS=OFF
+      -DASSIMP_INJECT_DEBUG_POSTFIX=OFF
+      -DASSIMP_BUILD_ZLIB=ON
+  TEST_COMMAND ""
+  )
+set(DEP_LIST ${DEP_LIST} dep-assimp)
+set(DEP_LIBS ${DEP_LIBS} assimp-vc143-mt$<$<CONFIG:Debug>:d>
+  zlibstatic$<$<CONFIG:Debug>:d>
+  IrrXML$<$<CONFIG:Debug>:d>
+  )
 
 # imgui
 # target name 

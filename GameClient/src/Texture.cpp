@@ -18,30 +18,30 @@ std::unique_ptr<Texture> Texture::Create(const Image* image)
 
 void Texture::Bind() const
 {
-	//	binding °úÁ¤ : ¾ÕÀ¸·Î ÀÌ¿ëÇÒ GL_TEXTURE_2D -> _texture 
+	//	binding ê³¼ì • : ì•ìœ¼ë¡œ ì´ìš©í•  GL_TEXTURE_2D -> _texture 
 	glBindTexture(GL_TEXTURE_2D, _texture);
 }
 
 void Texture::Initialize(const Image* image)
 {
-	//	°¡·Î/¼¼·Î Å©±â°¡ 2ÀÇ Áö¼öÇüÅÂÀÏ ¶§ GPU°¡ °¡Àå È¿À²ÀûÀ¸·Î Ã³¸®ÇÒ ¼ö ÀÖ´Ù.
+	//	ê°€ë¡œ/ì„¸ë¡œ í¬ê¸°ê°€ 2ì˜ ì§€ìˆ˜í˜•íƒœì¼ ë•Œ GPUê°€ ê°€ì¥ íš¨ìœ¨ì ìœ¼ë¡œ ì²˜ë¦¬í•  ìˆ˜ ìˆë‹¤.
 
-	//	opengl texture object »ı¼º -> textureID
+	//	opengl texture object ìƒì„± -> textureID
 	glGenTextures(1, &_texture);
 
 	Bind();
 
 	//	Mipmap 
 	//	GL_LINEAR_MIPMAP_LINEAR
-	//	ÀÛÀº »çÀÌÁîÀÇ ÀÌ¹ÌÁö¸¦ ¹Ì¸® ÁØºñÇÏ´Â ±â¹ı
-	//	°¡Àå Å« ÀÌ¹ÌÁö -> 0 level
-	//	°¡·Î/¼¼·Î Å©±â Àı¹İ¾¿ ÁÙÀÎ ÀÌ¹ÌÁö¸¦ ¹Ì¸® °è»êÇÏ¿© level 1¾¿ Áõ°¡½ÃÅ°¸ç ÀúÀå
-	//	¿øº» ÀÌ¹ÌÁö ÀúÀåÀ» À§ÇØ ÇÊ¿äÇÑ ¸Ş¸ğ¸®º¸´Ù 1/3 ¸¸Å­ ´õ ¼Ò¸ğ
+	//	ì‘ì€ ì‚¬ì´ì¦ˆì˜ ì´ë¯¸ì§€ë¥¼ ë¯¸ë¦¬ ì¤€ë¹„í•˜ëŠ” ê¸°ë²•
+	//	ê°€ì¥ í° ì´ë¯¸ì§€ -> 0 level
+	//	ê°€ë¡œ/ì„¸ë¡œ í¬ê¸° ì ˆë°˜ì”© ì¤„ì¸ ì´ë¯¸ì§€ë¥¼ ë¯¸ë¦¬ ê³„ì‚°í•˜ì—¬ level 1ì”© ì¦ê°€ì‹œí‚¤ë©° ì €ì¥
+	//	ì›ë³¸ ì´ë¯¸ì§€ ì €ì¥ì„ ìœ„í•´ í•„ìš”í•œ ë©”ëª¨ë¦¬ë³´ë‹¤ 1/3 ë§Œí¼ ë” ì†Œëª¨
 
 	//	GL_NEAREST_MIPMAP_NEAREST
-	//	MipmapÁß¿¡ °¡Àå °¡±î¿î MipmapÀ» ¼±ÅÃÇØ¼­ ±× Áß¿¡¼­ °¡±î¿î ÇÈ¼¿À» ¼±ÅÃÇÑ´Ù.
+	//	Mipmapì¤‘ì— ê°€ì¥ ê°€ê¹Œìš´ Mipmapì„ ì„ íƒí•´ì„œ ê·¸ ì¤‘ì—ì„œ ê°€ê¹Œìš´ í”½ì…€ì„ ì„ íƒí•œë‹¤.
 	//	GL_LINEAR_MIPMAP_LINEAR
-	//	MipmapÁß¿¡ ÀûÇÕÇÑ µÎ ·¹º§ÀÇ MipmapÀ» ¼±ÅÃÇØ¼­ ±× »çÀÌÀÇ °ªÀ» interpolation ÇÑ´Ù.
+	//	Mipmapì¤‘ì— ì í•©í•œ ë‘ ë ˆë²¨ì˜ Mipmapì„ ì„ íƒí•´ì„œ ê·¸ ì‚¬ì´ì˜ ê°’ì„ interpolation í•œë‹¤.
 
 	SetFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
@@ -59,16 +59,16 @@ void Texture::Initialize(const Image* image)
 		break;
 	}
 
-	//	CPU Image -> GPU·Î º¹»ç
+	//	CPU Image -> GPUë¡œ ë³µì‚¬
 	//	Target : GL_TEXTURE_2D -> _texture
 	glTexImage2D(GL_TEXTURE_2D,
-		//	GPU ÂÊÀÇ Texture ±¸Á¶ ±â¼ú
-		//  0 level : ±âº» ÀÌ¹ÌÁö »çÀÌÁî
-		//  GL_RGBA : textureÀÇ ÇÈ¼¿ Æ÷¸Ë
-		//	0 : Border »çÀÌÁî
+		//	GPU ìª½ì˜ Texture êµ¬ì¡° ê¸°ìˆ 
+		//  0 level : ê¸°ë³¸ ì´ë¯¸ì§€ ì‚¬ì´ì¦ˆ
+		//  GL_RGBA : textureì˜ í”½ì…€ í¬ë§·
+		//	0 : Border ì‚¬ì´ì¦ˆ
 		0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0,
-		//	imageÀÇ texture ±¸Á¶ ±â¼ú
-		//	format : CPU Memory »ó¿¡ Á¸ÀçÇÏ´Â image ÇÈ¼¿ Æ÷¸Ë
+		//	imageì˜ texture êµ¬ì¡° ê¸°ìˆ 
+		//	format : CPU Memory ìƒì— ì¡´ì¬í•˜ëŠ” image í”½ì…€ í¬ë§·
 		format, GL_UNSIGNED_BYTE, image->GetData());
 
 	//	Mipmap 
@@ -78,18 +78,18 @@ void Texture::Initialize(const Image* image)
 void Texture::SetFilter(uint32_t minFilter, uint32_t magFilter) const
 {
 
-	//	GL_TEXTURE_MIN_FILTER ÀÌ¹ÌÁö Ãà¼Ò ÇÊÅÍ
+	//	GL_TEXTURE_MIN_FILTER ì´ë¯¸ì§€ ì¶•ì†Œ í•„í„°
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-	//	GL_TEXTURE_MIN_FILTER ÀÌ¹ÌÁö È®´ë ÇÊÅÍ
+	//	GL_TEXTURE_MIN_FILTER ì´ë¯¸ì§€ í™•ëŒ€ í•„í„°
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
 void Texture::SetWrap(uint32_t sWrap, uint32_t tWrap) const
 {
 
-	//	ÀÌ¹ÌÁö ¹üÀ§°¡ 0~1 »çÀÌ°¡ ¾Æ´Ò °æ¿ìÀÇ ·¡ÇÎ
-	//	S : Texture ÁÂÇ¥°è¿¡¼­ xÃà
-	//	T : Texture ÁÂÇ¥°è¿¡¼­ yÃà
+	//	ì´ë¯¸ì§€ ë²”ìœ„ê°€ 0~1 ì‚¬ì´ê°€ ì•„ë‹ ê²½ìš°ì˜ ë˜í•‘
+	//	S : Texture ì¢Œí‘œê³„ì—ì„œ xì¶•
+	//	T : Texture ì¢Œí‘œê³„ì—ì„œ yì¶•
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sWrap);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, tWrap);
 

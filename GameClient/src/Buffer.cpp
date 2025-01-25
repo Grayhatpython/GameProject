@@ -8,14 +8,16 @@ Buffer::~Buffer()
 	}
 }
 
-bool Buffer::Initialize(uint32_t target, uint32_t usage, const void* data, size_t dataSize)
+bool Buffer::Initialize(uint32_t target, uint32_t usage, const void* data, size_t stride, size_t count)
 {
 	_target = target;
 	_usage = usage;
+	_stride = stride;
+	_count = count;
 	
 	glGenBuffers(1, &_buffer);
 	Bind();
-	glBufferData(target, dataSize, data, usage);
+	glBufferData(target, stride * count, data, usage);
 
 	/*
 	glBind...() 함수를 이용하여 지금부터 사용할 object를 선택한다.
@@ -48,10 +50,10 @@ void Buffer::Bind() const
 	glBindBuffer(_target, _buffer);
 }
 
-std::unique_ptr<Buffer> Buffer::Create(uint32_t target, uint32_t usage, const void* data, size_t dataSize)
+std::unique_ptr<Buffer> Buffer::Create(uint32_t target, uint32_t usage, const void* data, size_t stride, size_t count)
 {
     auto buffer = std::unique_ptr<Buffer>(new Buffer());
-    if (buffer->Initialize(target, usage, data, dataSize) == false)
+    if (buffer->Initialize(target, usage, data, stride, count) == false)
         return nullptr;
 
     return std::move(buffer);

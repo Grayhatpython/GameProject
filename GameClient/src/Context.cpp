@@ -118,12 +118,18 @@ void Context::Render()
 
 		if (ImGui::Begin("Editor")) 
 		{
-			if (ImGui::CollapsingHeader("Camera"))
+			if (ImGui::CollapsingHeader("Background Color"), ImGuiTreeNodeFlags_DefaultOpen)
+			{
+				ImGui::ColorEdit4("color", glm::value_ptr(_clearColor));
+				glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
+			}
+
+			if (ImGui::CollapsingHeader("Camera"), ImGuiTreeNodeFlags_DefaultOpen)
 			{
 
-				ImGui::DragFloat3("Camera pos", glm::value_ptr(_cameraPos), 0.01f);
-				ImGui::DragFloat("Camera yaw", &_cameraYaw, 0.1f);
-				ImGui::DragFloat("Camera pitch", &_cameraPitch, 0.1f, -89.0f, 89.0f);
+				ImGui::DragFloat3("camera pos", glm::value_ptr(_cameraPos), 0.01f);
+				ImGui::DragFloat("camera yaw", &_cameraYaw, 0.1f);
+				ImGui::DragFloat("camera pitch", &_cameraPitch, 0.1f, -89.0f, 89.0f);
 				ImGui::Separator();
 
 				if (ImGui::Button("Reset camera"))
@@ -136,10 +142,14 @@ void Context::Render()
 
 			if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				ImGui::DragFloat3("l.position", glm::value_ptr(_light.position), 0.01f);
-				ImGui::ColorEdit3("l.ambient", glm::value_ptr(_light.ambient));
-				ImGui::ColorEdit3("l.diffuse", glm::value_ptr(_light.diffuse));
-				ImGui::ColorEdit3("l.specular", glm::value_ptr(_light.specular));
+				ImGui::DragFloat3("position", glm::value_ptr(_light.position), 0.01f);
+				ImGui::DragFloat3("direction", glm::value_ptr(_light.direction), 0.01f);
+				ImGui::DragFloat("distance", &_light.distance, 0.5, 0.0f, 3000.0f);
+				ImGui::DragFloat2("cutoff", glm::value_ptr(_light.cutoff), 0.5f, 0.0f, 180.0f);
+				ImGui::ColorEdit3("ambient", glm::value_ptr(_light.ambient));
+				ImGui::ColorEdit3("diffuse", glm::value_ptr(_light.diffuse));
+				ImGui::ColorEdit3("specular", glm::value_ptr(_light.specular));
+				ImGui::Checkbox("Flash light", &_flashLightMode);
 			}
 
 			if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
@@ -153,18 +163,6 @@ void Context::Render()
 		ImGui::End();
 	}
 
-	std::vector<glm::vec3> cubePositions = {
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(2.0f, 5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f, 3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f, 2.0f, -2.5f),
-		glm::vec3(1.5f, 0.2f, -1.5f),
-		glm::vec3(-1.3f, 1.0f, -1.5f),
-	};
 
 	//	Depth Buffer
 	//	해당 픽셀의 깊이갑 (z축값)을 저장
@@ -183,7 +181,7 @@ void Context::Render()
 		_cameraFront = glm::rotate(glm::mat4(1.0f), glm::radians(_cameraYaw), glm::vec3(0.0f, 1.0f, 0.0f)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(_cameraPitch), glm::vec3(1.0f, 0.0f, 0.0f)) *
 			glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
-
+	
 		auto projection = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.01f, 30.0f);
 
 		/*
@@ -209,17 +207,29 @@ void Context::Render()
 
 		auto view = glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
 
-		auto lightModelTransform =glm::translate(glm::mat4(1.0), _light.position) *glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
-		
-		//	light
-		_program2->UseProgram();
-		_program2->SetUniform("color", glm::vec4(_light.ambient + _light.diffuse, 1.0f));
-		_program2->SetUniform("transform", projection* view* lightModelTransform);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		/*
+		//	여러 개의 랜덤 회전하는 박스 렌더링
+		std::vector<glm::vec3> cubePositions = {
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(2.0f, 5.0f, -15.0f),
+			glm::vec3(-1.5f, -2.2f, -2.5f),
+			glm::vec3(-3.8f, -2.0f, -12.3f),
+			glm::vec3(2.4f, -0.4f, -3.5f),
+			glm::vec3(-1.7f, 3.0f, -7.5f),
+			glm::vec3(1.3f, -2.0f, -2.5f),
+			glm::vec3(1.5f, 2.0f, -2.5f),
+			glm::vec3(1.5f, 0.2f, -1.5f),
+			glm::vec3(-1.3f, 1.0f, -1.5f),
+		};
 
 		_program->UseProgram();
 		_program->SetUniform("viewPos", _cameraPos);
 		_program->SetUniform("light.position", _light.position);
+		_program->SetUniform("light.direction", _light.direction);
+		_program->SetUniform("light.cutoff", glm::vec2(
+			cosf(glm::radians(_light.cutoff[0])),
+			cosf(glm::radians(_light.cutoff[0] + _light.cutoff[1]))));
+		_program->SetUniform("light.attenuation", Utility::GetAttenuationCoeff(_light.distance));
 		_program->SetUniform("light.ambient", _light.ambient);
 		_program->SetUniform("light.diffuse", _light.diffuse);
 		_program->SetUniform("light.specular", _light.specular);
@@ -239,8 +249,54 @@ void Context::Render()
 			auto transform = projection * view * model;
 			_program->SetUniform("transform", transform);
 			_program->SetUniform("modelTransform", model);
-			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+			_box->Render();
+		}*/
+
+		glm::vec3 lightPos = _light.position;
+		glm::vec3 lightDir = _light.direction;
+		if (_flashLightMode)
+		{
+			//	카메라의 위치와 방향이 곧 라이트랑 같다..
+			lightPos = _cameraPos;
+			lightDir = _cameraFront;
 		}
+		else
+		{
+			//	light
+			auto lightModelTransform = glm::translate(glm::mat4(1.0), _light.position) * glm::scale(glm::mat4(1.0), glm::vec3(0.1f));
+
+			_program2->UseProgram();
+			_program2->SetUniform("color", glm::vec4(_light.ambient + _light.diffuse, 1.0f));
+			_program2->SetUniform("transform", projection * view * lightModelTransform);
+
+			_box->Render(_program2.get());
+		}
+
+		_program->UseProgram();
+		_program->SetUniform("viewPos", _cameraPos);
+		_program->SetUniform("light.position", lightPos);
+		_program->SetUniform("light.direction", lightDir);
+		_program->SetUniform("light.cutoff", glm::vec2(
+			cosf(glm::radians(_light.cutoff[0])),
+			cosf(glm::radians(_light.cutoff[0] + _light.cutoff[1]))));
+		_program->SetUniform("light.attenuation", Utility::GetAttenuationCoeff(_light.distance));
+		_program->SetUniform("light.ambient", _light.ambient);
+		_program->SetUniform("light.diffuse", _light.diffuse);
+		_program->SetUniform("light.specular", _light.specular);
+
+		//	Texture 바인딩
+		_program->SetUniform("material.diffuse", 0);
+		_program->SetUniform("material.specular", 1);
+
+		_program->SetUniform("material.shininess", _material.shininess);
+
+	
+
+		auto modelTransform = glm::mat4(1.0f);
+		auto transform = projection * view * modelTransform;
+		_program->SetUniform("transform", transform);
+		_program->SetUniform("modelTransform", modelTransform);
+		_model->Render(_program.get());
 	}
 }
 
@@ -319,109 +375,9 @@ void Context::MouseButton(int button, int action, double x, double y)
 bool Context::Initialize()
 {
 	{
-		//char buffer[MAX_PATH];
-		//GetCurrentDirectory(MAX_PATH, buffer);
-
-		/*
-		//	x y z	: position
-		//	r g b	: color
-		//	s t		: texture coordinate
-		float vertices[] = {
-		  0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,	// top right
-		  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,	// bottom right
-		  -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-		  -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,	// top left
-		};
-
-		uint32_t indices[] = {
-			0, 1, 3,
-			1, 2, 3
-		};
-
-
-		// 정점이 3개, 각 정점의 위치, 위치에 대해 x/y/z 값, 각 좌표값마다 float(4byte) 크기, 정점 간의 간격이 12bytes
-		// vertexBuffer object가 가진 정점에 대한 구조를 알려줘야 한다!
-
-		// Vertex Arrray Object (VAO)
-		// 정점 데이터의 구조를 알려주는 object
-
-		_vertexLayout = VertexLayout::Create();
-
-		_vertexBuffer = Buffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(vertices));
-		assert(_vertexBuffer);
-
-		// vertex buffer layout
-		// vertex shader -> layout을 사용하여 attrib index 지정
-		// vertex shader out 변수들은 Rasterization 과정을 거쳐 픽셀단위로 보간되어 fragment shader의 in 변수들로 입력
-		// vertex -> x | y | z | r | g | b | s | t
-		// 0 attrib ( xyz, offset 0 )
-		_vertexLayout->EnableVertexAttribArray(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
-		// 1 attrib ( rgb, offset 12 )
-		_vertexLayout->EnableVertexAttribArray(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 3);
-		// 2 attrib ( st, offset 24 )
-		_vertexLayout->EnableVertexAttribArray(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 6);
-
-		_indexBuffer = Buffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(indices));
-		assert(_indexBuffer);
-
-		*/
-
-		// pos.xyz, normal.xyz, texcoord.uv
-		float vertices[] = { 
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-			0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
-			0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
-
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-			0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
-			0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
-
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-
-			0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-			0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-			0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-			0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-			0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
-			0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-			0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-			0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
-		};
-
-		uint32_t indices[] = {
-		   0,  2,  1,  2,  0,  3,
-		   4,  5,  6,  6,  7,  4,
-		   8,  9, 10, 10, 11,  8,
-		  12, 14, 13, 14, 12, 15,
-		  16, 17, 18, 18, 19, 16,
-		  20, 22, 21, 22, 20, 23,
-		};
-	
-		_vertexLayout = VertexLayout::Create();
-
-		_vertexBuffer = Buffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(vertices));
-		assert(_vertexBuffer);
-
-		//	0 attrib ( pos.xyz, offset 0 )
-		_vertexLayout->EnableVertexAttribArray(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
-		//	1 attrib ( normal.xyz, offset 12 )
-		_vertexLayout->EnableVertexAttribArray(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 3);
-		//	2 attrib ( texcoord.uv, offset 24 )
-		_vertexLayout->EnableVertexAttribArray(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 6);
-
-		_indexBuffer = Buffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(indices));
-		assert(_indexBuffer);
+		_box = Mesh::CreateBox();
+		_model = Model::Load("../model/backpack.obj");
+		assert(_model);
 	}
 
 	{
@@ -446,8 +402,11 @@ bool Context::Initialize()
 
 		_texture2 = Texture::Create(image2.get());
 
-		_material.diffuse = Texture::Create(Image::Load("../image/container2.png").get());
-		_material.specular = Texture::Create(Image::Load("../image/container2_specular.png").get());
+		//_material.diffuse = Texture::Create(Image::Load("../image/container2.png").get());
+		//_material.specular = Texture::Create(Image::Load("../image/container2_specular.png").get());
+
+		_material.diffuse = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)).get());
+		_material.specular = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
 
 		//	texture를 shader program에 제공하는 방법
 		//	glActiveTexture(textureSlot)			->	현재 다루고자 하는 texture slot 선택

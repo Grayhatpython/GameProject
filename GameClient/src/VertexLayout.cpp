@@ -35,7 +35,7 @@ void VertexLayout::Bind() const
 void VertexLayout::EnableVertexAttribArray(uint32_t attribIndex, int count, uint32_t type, bool normalized, size_t stride, uint64_t offset) const
 {
     glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, count, type, normalized, stride, reinterpret_cast<const void*>(offset));
+    glVertexAttribPointer(attribIndex, count, type, normalized, static_cast<GLsizei>(stride), reinterpret_cast<const void*>(offset));
 
     /*
 	glEnableVertexAttribArray(0);

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Buffer.h"
 #include "Program.h"
-#include "VertexLayout.h"
+#include "Mesh.h"
+#include "Model.h"
 #include "Texture.h"
 #include <filesystem>
 
@@ -34,12 +34,8 @@ private:
 	int _width{ WINDOW_WIDTH };
 	int _height{ WINDOW_HEIGHT };
 
-	//	Buffer
-	std::unique_ptr<Buffer> _vertexBuffer;
-	std::unique_ptr<Buffer> _indexBuffer;
-
-	//	layout
-	std::unique_ptr<VertexLayout> _vertexLayout;
+	std::unique_ptr<Mesh>	_box;
+	std::unique_ptr<Model>	_model;
 
 	//	texture
 	std::unique_ptr<Texture> _texture;
@@ -59,12 +55,17 @@ private:
 	// lighting
 	// light parameter
 	struct Light {
-		glm::vec3 position{ glm::vec3(3.0f, 3.0f, 3.0f) };
-		glm::vec3 ambient{ glm::vec3(0.1f, 0.1f, 0.1f) };
-		glm::vec3 diffuse{ glm::vec3(0.5f, 0.5f, 0.5f) };
-		glm::vec3 specular{ glm::vec3(1.0f, 1.0f, 1.0f) };
+		glm::vec3	position{ glm::vec3(2.0f, 2.0f, 2.0f) };
+		float		distance{ 32.0f };
+		glm::vec3	direction{ glm::vec3(-1.0f, -1.0f, -1.0f) };
+		glm::vec2	cutoff{ glm::vec2(20.0f, 5.0f) };
+
+		glm::vec3	ambient{ glm::vec3(0.1f, 0.1f, 0.1f) };
+		glm::vec3	diffuse{ glm::vec3(0.5f, 0.5f, 0.5f) };
+		glm::vec3	specular{ glm::vec3(1.0f, 1.0f, 1.0f) };
 	};
-	Light _light;
+	Light	_light;
+	bool	_flashLightMode{ false };
 
 	// material parameter
 	struct Material {

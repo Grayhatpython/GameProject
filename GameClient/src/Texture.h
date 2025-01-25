@@ -1,14 +1,14 @@
 #pragma once
 
 // Texture
-// Opengl texture object »ı¼º ¹× ¹ÙÀÎµù
-// wrapping, filtering option ¼³Á¤
-// ÀÌ¹ÌÁö µ¥ÀÌÅÍ¸¦ GPU ¸Ş¸ğ¸®·Î º¹»ç
-// shader ÇÁ·Î±×·¥ÀÌ ¹ÙÀÎµù µÇ¾úÀ» ¶§ (glUseProgrom) »ç¿ëÇÏ°íÀÚ ÇÏ´Â texture¸¦ unifrom ÇüÅÂ·Î ÇÁ·Î±×·¥¿¡ Àü´Ş
+// Opengl texture object ìƒì„± ë° ë°”ì¸ë”©
+// wrapping, filtering option ì„¤ì •
+// ì´ë¯¸ì§€ ë°ì´í„°ë¥¼ GPU ë©”ëª¨ë¦¬ë¡œ ë³µì‚¬
+// shader í”„ë¡œê·¸ë¨ì´ ë°”ì¸ë”© ë˜ì—ˆì„ ë•Œ (glUseProgrom) ì‚¬ìš©í•˜ê³ ì í•˜ëŠ” textureë¥¼ unifrom í˜•íƒœë¡œ í”„ë¡œê·¸ë¨ì— ì „ë‹¬
 
-//	texture Àû¿ë
-//	vertex attribute¿¡ texture coordinate Ãß°¡
-//	texture¸¦ ÀĞ¾î¼­ ÇÈ¼¿°ªÀ» °áÁ¤ÇÏ´Â shader ÀÛ¼º
+//	texture ì ìš©
+//	vertex attributeì— texture coordinate ì¶”ê°€
+//	textureë¥¼ ì½ì–´ì„œ í”½ì…€ê°’ì„ ê²°ì •í•˜ëŠ” shader ì‘ì„±
 
 class Image;
 class Texture 
@@ -22,7 +22,7 @@ public:
     void Bind() const;
 
 private:
-    void Initialize(const Image* image);
+    void Initialize(const Image* iBmage);
 
 public:
     void SetFilter(uint32_t minFilter, uint32_t magFilter) const;
