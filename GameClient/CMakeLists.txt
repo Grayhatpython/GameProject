@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}
     src/Texture.cpp             src/Texture.h
     src/Mesh.cpp                src/Mesh.h
     src/Model.cpp               src/Model.h
+    src/Timer.cpp               src/Timer.h
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC src/pch.h)

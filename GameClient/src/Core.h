@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Timer.h"
 #include "Context.h"
 
 struct ImGuiContext;
@@ -18,6 +19,7 @@ private:
 
 public:
 	void Update();
+	void RenderFPS();
 
 public:
 	static void OnFramebufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -32,4 +34,8 @@ private:
 	std::unique_ptr<Context>	_context;
 	ImGuiContext*				_imguiContext = nullptr;
 	ImPlotContext*				_implotContext = nullptr;
+
+private:
+	//	TODO
+	std::unique_ptr<Timer>		_timer;
 };

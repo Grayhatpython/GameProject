@@ -152,11 +152,6 @@ void Context::Render()
 				ImGui::Checkbox("Flash light", &_flashLightMode);
 			}
 
-			if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
-			{
-				ImGui::DragFloat("m.shininess", &_material.shininess, 1.0f, 1.0f, 256.0f);
-			}
-
 			ImGui::Checkbox("Animation", &_animation);
 		}
 
@@ -167,11 +162,13 @@ void Context::Render()
 	//	Depth Buffer
 	//	해당 픽셀의 깊이갑 (z축값)을 저장
 	//	픽셀의 값을 업데이트 전에 현재 그리려는 픽셀의 z값과 깊이 버퍼에 저장된 해당 위치의 z값을 비교해서
-	//	현재 그기려는 픽셀이 이전에 그려진 픽셀보다 뒤에 있을 경우 픽셀을 그리지 않음.
-	//	1이 가장 뒤에 있고, 0이 가장 앞 (왼손 좌표계)
+	//	현재 그릴려는 픽셀이 이전에 그려진 픽셀보다 뒤에 있을 경우 픽셀을 그리지 않음.
+	//	1이 가장 뒤에 있고, 0이 가장 앞 (왼손 좌표계) 
+	//	버텍스 쉐이더에서는 오른손 좌표계에서 픽셀 쉐이더에서는 왼손 좌표계를 써서 방향이 바뀐다.
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	//glDepthMask(GL_FALSE);
 
 	{
 		//	pitch(x) 끄덕각
@@ -182,7 +179,7 @@ void Context::Render()
 			glm::rotate(glm::mat4(1.0f), glm::radians(_cameraPitch), glm::vec3(1.0f, 0.0f, 0.0f)) *
 			glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
 	
-		auto projection = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.01f, 30.0f);
+		auto projection = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.1f, 30.f);
 
 		/*
 		float angle = glfwGetTime() * glm::pi<float>() * 0.5f;
@@ -284,19 +281,48 @@ void Context::Render()
 		_program->SetUniform("light.diffuse", _light.diffuse);
 		_program->SetUniform("light.specular", _light.specular);
 
+		auto modelTransform =glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f)) * 
+			glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
+		auto transform = projection * view * modelTransform;
+		_program->SetUniform("transform", transform);
+		_program->SetUniform("modelTransform", modelTransform);
+		_planeMaterial->SetProgram(_program.get());
+		_box->Render(_program.get());
+
+		modelTransform =
+			glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.75f, -4.0f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 1.5f, 1.5f));
+		transform = projection * view * modelTransform;
+		_program->SetUniform("transform", transform);
+		_program->SetUniform("modelTransform", modelTransform);
+		_box1Material->SetProgram(_program.get());
+		_box->Render(_program.get());
+
+		modelTransform =
+			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.7f, 2.0f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
+			glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 1.5f, 1.5f));
+		transform = projection * view * modelTransform;
+		_program->SetUniform("transform", transform);
+	    _program->SetUniform("modelTransform", modelTransform);
+		_box2Material->SetProgram(_program.get());
+		_box->Render(_program.get());
+
+		/*
+		* Model 
 		//	Texture 바인딩
 		_program->SetUniform("material.diffuse", 0);
 		_program->SetUniform("material.specular", 1);
 
 		_program->SetUniform("material.shininess", _material.shininess);
 
-	
-
 		auto modelTransform = glm::mat4(1.0f);
 		auto transform = projection * view * modelTransform;
 		_program->SetUniform("transform", transform);
 		_program->SetUniform("modelTransform", modelTransform);
 		_model->Render(_program.get());
+		*/
 	}
 }
 
@@ -374,11 +400,6 @@ void Context::MouseButton(int button, int action, double x, double y)
 
 bool Context::Initialize()
 {
-	{
-		_box = Mesh::CreateBox();
-		_model = Model::Load("../model/backpack.obj");
-		assert(_model);
-	}
 
 	{
 		_program = Program::Create("../shader/lighting.vs", "../shader/lighting.fs");
@@ -390,38 +411,42 @@ bool Context::Initialize()
 	}
 
 	{
-		auto image = Image::Load("../image/container.jpg");
-		assert(image);
-		printf("Image : %s , Width : %d , Height : %d\n", "container.jpg", image->GetWidth(), image->GetHeight());
-		
-		_texture = Texture::Create(image.get());
+		_box = Mesh::CreateBox();
+		_ASSERT(_box);
+		//_model = Model::Load("../model/backpack.obj");
+		//assert(_model);
+	}
 
-		auto image2 = Image::Load("../image/awesomeface.png");
-		assert(image2);
-		printf("Image2 : %s , Width : %d , Height : %d\n", "awesomeface.jpg", image2->GetWidth(), image2->GetHeight());
-
-		_texture2 = Texture::Create(image2.get());
-
+	{
 		//_material.diffuse = Texture::Create(Image::Load("../image/container2.png").get());
 		//_material.specular = Texture::Create(Image::Load("../image/container2_specular.png").get());
 
-		_material.diffuse = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)).get());
-		_material.specular = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
+		//_material._diffuse = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)).get());
+		//_material._specular = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
 
 		//	texture를 shader program에 제공하는 방법
 		//	glActiveTexture(textureSlot)			->	현재 다루고자 하는 texture slot 선택
 		//	glBindTexture(textureType, textureID)	->	현재 설정중인 texture slot에 texture object binding
 		//	glGetUniformLocation()					->	shader 내의 sampler2D uniform handle을 얻어온다.
 		//	glUniform1i()							->	sampler2D uniform에 texture slot index 입력
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, _texture->GetID());
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, _texture2->GetID());
 
-		_program->UseProgram();
+		std::shared_ptr<Texture> darkGrayTexture = Texture::Create(Image::CreateSingleColorImage(4, 4,glm::vec4(0.2f, 0.2f, 0.2f, 1.0f)).get());
+		std::shared_ptr<Texture> grayTexture = Texture::Create(Image::CreateSingleColorImage(4, 4,glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
 
-		_program->SetUniform("tex",0);
-		_program->SetUniform("tex2",1);
+		_planeMaterial = Material::Create();
+		_planeMaterial->_diffuse = Texture::Create(Image::Load("../image/marble.jpg").get());
+		_planeMaterial->_specular = grayTexture;
+		_planeMaterial->_shininess = 128.0f;
+
+		_box1Material = Material::Create();
+		_box1Material->_diffuse = Texture::Create(Image::Load("../image/container.jpg").get());
+		_box1Material->_specular = darkGrayTexture;
+		_box1Material->_shininess = 16.0f;
+
+		_box2Material = Material::Create();
+		_box2Material->_diffuse = Texture::Create(Image::Load("../image/container2.png").get());
+		_box2Material->_specular = Texture::Create(Image::Load("../image/container2_specular.png").get());
+		_box2Material->_shininess = 64.0f;
 	}
 
 	{	

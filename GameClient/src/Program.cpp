@@ -45,7 +45,7 @@ bool Program::IsProgramLink(const std::vector<std::shared_ptr<Shader>>& shaders)
 		char infoLog[MAX_LOG_INFO_LENGTH];
 		glGetProgramInfoLog(_program, MAX_LOG_INFO_LENGTH, nullptr, infoLog);
 
-		// ¡÷ºÆ
+		// Ï£ºÏÑù
 		return false;
 	}
 

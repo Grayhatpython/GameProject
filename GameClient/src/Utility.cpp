@@ -9,7 +9,7 @@ std::optional<std::string> Utility::LoadTextFromFile(const std::string& fileName
 
 	if (fs.is_open() == false)
 	{
-		// ¡÷ºÆ
+		// Ï£ºÏÑù
 		return {};
 	}
 

@@ -20,7 +20,7 @@ std::unique_ptr<Image> Image::Create(int width, int height, int channelCount)
 	return std::move(image);
 }
 
-//	´ÜÀÏ ÄÃ·¯ ÀÌ¹ÌÁö
+//	ë‹¨ì¼ ì»¬ëŸ¬ ì´ë¯¸ì§€
 std::unique_ptr<Image> Image::CreateSingleColorImage(int width, int height, const glm::vec4& color)
 {
 	glm::vec4 clamped = glm::clamp(color * 255.0f, 0.0f, 255.0f);
@@ -48,10 +48,10 @@ Image::~Image()
 
 bool Image::LoadFromFile(const std::string& filepath)
 {
-	//	opengl ÀÌ¹ÌÁö´Â 0~1 »çÀÌÀÇ ¹üÀ§
-	//	ÀÏ¹İ ÀÌ¹ÌÁö´Â ÁÂ»ó´ÜÀ» ¿øÁ¡ 
-	//	openglÀº ÁÂÇÏ´ÜÀ» ¿øÁ¡
-	//	ÀÌ¹ÌÁö ·Îµù½Ã »óÇÏ¸¦ ¹İÀü½ÃÄÑ¾ß ÇÑ´Ù.
+	//	opengl ì´ë¯¸ì§€ëŠ” 0~1 ì‚¬ì´ì˜ ë²”ìœ„
+	//	ì¼ë°˜ ì´ë¯¸ì§€ëŠ” ì¢Œìƒë‹¨ì„ ì›ì  
+	//	openglì€ ì¢Œí•˜ë‹¨ì„ ì›ì 
+	//	ì´ë¯¸ì§€ ë¡œë”©ì‹œ ìƒí•˜ë¥¼ ë°˜ì „ì‹œì¼œì•¼ í•œë‹¤.
 	::stbi_set_flip_vertically_on_load(true);
 	_data = ::stbi_load(filepath.c_str(), &_width, &_height, &_channelCount, 0);
 	

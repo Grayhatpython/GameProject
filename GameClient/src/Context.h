@@ -35,18 +35,18 @@ private:
 	int _height{ WINDOW_HEIGHT };
 
 	std::unique_ptr<Mesh>	_box;
-	std::unique_ptr<Model>	_model;
+	//std::unique_ptr<Model>	_model;
 
 	//	texture
 	std::unique_ptr<Texture> _texture;
 	std::unique_ptr<Texture> _texture2;
 
 	// camera 
-	glm::vec3 _cameraPos{ glm::vec3(0.0f, 0.0f, 3.0f) };
+	glm::vec3 _cameraPos{ glm::vec3(0.0f, 2.5f, 8.0f) };
 	glm::vec3 _cameraFront{ glm::vec3(0.0f, 0.0f, -1.0f) };
 	glm::vec3 _cameraUp{ glm::vec3(0.0f, 1.0f, 0.0f) };
 
-	float		_cameraPitch{ 0.0f };
+	float		_cameraPitch{ -20.0f };
 	float		_cameraYaw{ 0.0f };
 
 	bool		_cameraControl{ false };
@@ -55,10 +55,10 @@ private:
 	// lighting
 	// light parameter
 	struct Light {
-		glm::vec3	position{ glm::vec3(2.0f, 2.0f, 2.0f) };
-		float		distance{ 32.0f };
+		glm::vec3	position{ glm::vec3(1.0f, 4.0f, 4.0f) };
 		glm::vec3	direction{ glm::vec3(-1.0f, -1.0f, -1.0f) };
-		glm::vec2	cutoff{ glm::vec2(20.0f, 5.0f) };
+		glm::vec2	cutoff{ glm::vec2(120.0f, 5.0f) };
+		float		distance{ 128.0f };
 
 		glm::vec3	ambient{ glm::vec3(0.1f, 0.1f, 0.1f) };
 		glm::vec3	diffuse{ glm::vec3(0.5f, 0.5f, 0.5f) };
@@ -67,13 +67,10 @@ private:
 	Light	_light;
 	bool	_flashLightMode{ false };
 
-	// material parameter
-	struct Material {
-		std::unique_ptr<Texture> diffuse;
-		std::unique_ptr<Texture> specular;
-		float shininess{ 32.0f };
-	};
-	Material _material;
+	//Material _material;
+	std::shared_ptr<Material> _planeMaterial;
+	std::shared_ptr<Material> _box1Material;
+	std::shared_ptr<Material> _box2Material;
 
 	// animation
 	bool		_animation{ true };

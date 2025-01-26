@@ -28,7 +28,6 @@ Core::~Core()
 
 bool Core::Initialize()
 {
-
     if (::glfwInit() == GLFW_FALSE)
     {
         const char* errorMsg = nullptr;
@@ -87,6 +86,10 @@ bool Core::Initialize()
 
     InitializeEventCallback();
 
+    _timer = std::unique_ptr<Timer>(new Timer());
+    _ASSERT(_timer);
+    _timer->Initialize();
+
 	return true;
 }
 
@@ -104,8 +107,13 @@ void Core::InitializeEventCallback()
 
 void Core::Update()
 {
+    //glfwSwapInterval(0);
+
     while (!::glfwWindowShouldClose(_window))
     {
+        _timer->Update();
+        RenderFPS();
+
         //  Poll
         ::glfwPollEvents();
 
@@ -126,6 +134,14 @@ void Core::Update()
 
     _context.reset();
     ::glfwTerminate();
+}
+
+void Core::RenderFPS()
+{
+    uint32_t fps = _timer->GetFPS();
+
+    std::string title = "Opengl FPS : " + std::to_string(fps);
+    glfwSetWindowTitle(_window, title.c_str());
 }
 
 void Core::OnFramebufferSizeCallback(GLFWwindow* window, int width, int height)

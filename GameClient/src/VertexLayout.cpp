@@ -10,9 +10,9 @@ VertexLayout::~VertexLayout()
 void VertexLayout::Initialize()
 {
     /*
-    // Vertex Array Object »ı¼º
+    // Vertex Array Object ìƒì„±
 	glGenVertexArrays(1, &_vertexArrayObject);
-	// Vertex Array object ¹ÙÀÎµù 
+	// Vertex Array object ë°”ì¸ë”© 
 	glBindVertexArray(_vertexArrayObject);
     */
 

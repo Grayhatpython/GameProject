@@ -54,11 +54,11 @@ std::unique_ptr<Mesh> Mesh::CreateBox()
 	};
 
 
-	// Á¤Á¡ÀÌ 3°³, °¢ Á¤Á¡ÀÇ À§Ä¡, À§Ä¡¿¡ ´ëÇØ x/y/z °ª, °¢ ÁÂÇ¥°ª¸¶´Ù float(4byte) Å©±â, Á¤Á¡ °£ÀÇ °£°İÀÌ 12bytes
-	// vertexBuffer object°¡ °¡Áø Á¤Á¡¿¡ ´ëÇÑ ±¸Á¶¸¦ ¾Ë·ÁÁà¾ß ÇÑ´Ù!
+	// ì •ì ì´ 3ê°œ, ê° ì •ì ì˜ ìœ„ì¹˜, ìœ„ì¹˜ì— ëŒ€í•´ x/y/z ê°’, ê° ì¢Œí‘œê°’ë§ˆë‹¤ float(4byte) í¬ê¸°, ì •ì  ê°„ì˜ ê°„ê²©ì´ 12bytes
+	// vertexBuffer objectê°€ ê°€ì§„ ì •ì ì— ëŒ€í•œ êµ¬ì¡°ë¥¼ ì•Œë ¤ì¤˜ì•¼ í•œë‹¤!
 
 	// Vertex Arrray Object (VAO)
-	// Á¤Á¡ µ¥ÀÌÅÍÀÇ ±¸Á¶¸¦ ¾Ë·ÁÁÖ´Â object
+	// ì •ì  ë°ì´í„°ì˜ êµ¬ì¡°ë¥¼ ì•Œë ¤ì£¼ëŠ” object
 
 	_vertexLayout = VertexLayout::Create();
 
@@ -66,8 +66,8 @@ std::unique_ptr<Mesh> Mesh::CreateBox()
 	assert(_vertexBuffer);
 
 	// vertex buffer layout
-	// vertex shader -> layoutÀ» »ç¿ëÇÏ¿© attrib index ÁöÁ¤
-	// vertex shader out º¯¼öµéÀº Rasterization °úÁ¤À» °ÅÃÄ ÇÈ¼¿´ÜÀ§·Î º¸°£µÇ¾î fragment shaderÀÇ in º¯¼öµé·Î ÀÔ·Â
+	// vertex shader -> layoutì„ ì‚¬ìš©í•˜ì—¬ attrib index ì§€ì •
+	// vertex shader out ë³€ìˆ˜ë“¤ì€ Rasterization ê³¼ì •ì„ ê±°ì³ í”½ì…€ë‹¨ìœ„ë¡œ ë³´ê°„ë˜ì–´ fragment shaderì˜ in ë³€ìˆ˜ë“¤ë¡œ ì…ë ¥
 	// vertex -> x | y | z | r | g | b | s | t
 	// 0 attrib ( xyz, offset 0 )
 	_vertexLayout->EnableVertexAttribArray(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);

@@ -20,23 +20,23 @@ bool Buffer::Initialize(uint32_t target, uint32_t usage, const void* data, size_
 	glBufferData(target, stride * count, data, usage);
 
 	/*
-	glBind...() ÇÔ¼ö¸¦ ÀÌ¿ëÇÏ¿© Áö±İºÎÅÍ »ç¿ëÇÒ object¸¦ ¼±ÅÃÇÑ´Ù.
+	glBind...() í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬ ì§€ê¸ˆë¶€í„° ì‚¬ìš©í•  objectë¥¼ ì„ íƒí•œë‹¤.
 
-	// Vertex Buffer »ı¼º
+	// Vertex Buffer ìƒì„±
 	glGenBuffers(1, &_vertexBuffer);
-	// Vertex Buffer object ¹ÙÀÎµù 
-	// GL_ARRAY_BUFFER : Vertex data¸¦ ÀúÀåÇÒ ¿ëµµ
-	// Vertex Array Object°¡ »ç¿ëÇÒ Buffer -> _vertexBuffer
+	// Vertex Buffer object ë°”ì¸ë”© 
+	// GL_ARRAY_BUFFER : Vertex dataë¥¼ ì €ì¥í•  ìš©ë„
+	// Vertex Array Objectê°€ ì‚¬ìš©í•  Buffer -> _vertexBuffer
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	// ¹ÙÀÎµùµÈ buffer¿¡ µ¥ÀÌÅÍ º¹»ç
-	// »çÀÌÁî, µ¥ÀÌÅÍÀÇ Æ÷ÀÎÅÍ, ¿ëµµ
-	// GL_STATIC_DRAW : º¯È­°¡ ¾ø´Â µ¥ÀÌÅÍ
+	// ë°”ì¸ë”©ëœ bufferì— ë°ì´í„° ë³µì‚¬
+	// ì‚¬ì´ì¦ˆ, ë°ì´í„°ì˜ í¬ì¸í„°, ìš©ë„
+	// GL_STATIC_DRAW : ë³€í™”ê°€ ì—†ëŠ” ë°ì´í„°
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
 	*/
 
 	/*
 	// Element Buffer Object
-	// Á¤Á¡ÀÇ Áßº¹À» ¸·´Â´Ù.
+	// ì •ì ì˜ ì¤‘ë³µì„ ë§‰ëŠ”ë‹¤.
 	glGenBuffers(1, &_indexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, indices, GL_STATIC_DRAW);

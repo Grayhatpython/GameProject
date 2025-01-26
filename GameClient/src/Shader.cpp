@@ -25,7 +25,7 @@ bool Shader::IsLoadFromFile(const std::string& fileName, GLenum shaderType)
 		char infoLog[MAX_LOG_INFO_LENGTH];
 		glGetShaderInfoLog(_shader, MAX_LOG_INFO_LENGTH, nullptr, infoLog);
 
-		// ¡÷ºÆ
+		// Ï£ºÏÑù
 		return false;
 	}
 
