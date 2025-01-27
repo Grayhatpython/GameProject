@@ -1,5 +1,8 @@
 #include "Timer.h"
 
+std::shared_ptr<Timer>		Timer::S_Instance = nullptr;
+std::once_flag				Timer::S_InitializeFlag;
+
 void Timer::Initialize()
 {
 	::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&_frequency));

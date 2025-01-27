@@ -4,14 +4,10 @@ class Buffer
 {
 public:
     ~Buffer();
-private:
-    Buffer() {}
 
 public:
     bool    Initialize(uint32_t target, uint32_t usage, const void* data, size_t stride, size_t count);
     void    Bind() const;
-    
-    static  std::unique_ptr<Buffer> Create(uint32_t target, uint32_t usage, const void* data, size_t stride, size_t count);
 
 public:
     uint32_t    Get() const { return _buffer; }

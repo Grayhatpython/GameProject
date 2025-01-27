@@ -21,7 +21,7 @@ public:
 	void MouseMove(double x, double y);
 	void MouseButton(int button, int action, double x, double y);
 
-private:
+public:
 	bool Initialize();
 
 private:
@@ -36,10 +36,6 @@ private:
 
 	std::unique_ptr<Mesh>	_box;
 	//std::unique_ptr<Model>	_model;
-
-	//	texture
-	std::unique_ptr<Texture> _texture;
-	std::unique_ptr<Texture> _texture2;
 
 	// camera 
 	glm::vec3 _cameraPos{ glm::vec3(0.0f, 2.5f, 8.0f) };

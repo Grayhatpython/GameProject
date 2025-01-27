@@ -20,13 +20,6 @@ void VertexLayout::Initialize()
     Bind();
 }
 
-std::unique_ptr<VertexLayout> VertexLayout::Create()
-{
-    auto vertexLayout = std::unique_ptr<VertexLayout>(new VertexLayout());
-    vertexLayout->Initialize();
-    return std::move(vertexLayout);
-}
-
 void VertexLayout::Bind() const
 {
     glBindVertexArray(_vertexArrayObject);

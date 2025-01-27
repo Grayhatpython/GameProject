@@ -28,6 +28,13 @@ add_executable(${PROJECT_NAME}
     src/Mesh.cpp                src/Mesh.h
     src/Model.cpp               src/Model.h
     src/Timer.cpp               src/Timer.h
+    src/Component.cpp           src/Component.h
+    src/GameObject.cpp          src/GameObject.h
+    src/Transform.cpp           src/Transform.h
+    src/MonoBehaviour.cpp       src/MonoBehaviour.h
+    src/MeshRenderer.cpp        src/MeshRenderer.h
+    src/SceneManager.cpp        src/SceneManager.h
+    src/Scene.cpp               src/Scene.h
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC src/pch.h)

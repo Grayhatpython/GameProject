@@ -9,13 +9,6 @@ Texture::~Texture()
 	}
 }
 
-std::unique_ptr<Texture> Texture::Create(const Image* image)
-{
-	auto texture = std::unique_ptr<Texture>(new Texture());
-	texture->Initialize(image);
-	return std::move(texture);
-}
-
 void Texture::Bind() const
 {
 	//	binding 과정 : 앞으로 이용할 GL_TEXTURE_2D -> _texture 

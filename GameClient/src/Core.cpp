@@ -1,6 +1,6 @@
 #include "Core.h"
 #include "Context.h"
-
+#include "SceneManager.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -28,6 +28,35 @@ Core::~Core()
 
 bool Core::Initialize()
 {
+    if (InitializeGL() == false)
+        return false;
+
+    InitializeImGui();
+    InitializeEventCallback();
+    
+    _context = std::make_unique<Context>(new Context());
+    _context->Initialize();
+   
+    SceneManager::GetInstance()->LoadScene(L"Dev");
+    Timer::GetInstance()->Initialize();
+
+	return true;
+}
+
+void Core::InitializeEventCallback()
+{
+    ::glfwSetWindowUserPointer(_window, _context.get());
+
+    ::glfwSetFramebufferSizeCallback(_window, OnFramebufferSizeCallback);
+    ::glfwSetKeyCallback(_window, OnKeyCallback);
+    ::glfwSetCursorPosCallback(_window, OnCursorPosCallback);
+    ::glfwSetMouseButtonCallback(_window, OnMouseButtonCallback);
+    ::glfwSetCharCallback(_window, OnCharCallback);
+    ::glfwSetScrollCallback(_window, OnScrollCallback);
+}
+
+bool Core::InitializeGL()
+{
     if (::glfwInit() == GLFW_FALSE)
     {
         const char* errorMsg = nullptr;
@@ -47,7 +76,7 @@ bool Core::Initialize()
         ::glfwTerminate();
         return false;
     }
-   
+
     ::glfwMakeContextCurrent(_window);
 
     if (!::gladLoadGLLoader((GLADloadproc)::glfwGetProcAddress))
@@ -58,6 +87,11 @@ bool Core::Initialize()
 
     auto version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 
+    return true;
+}
+
+void Core::InitializeImGui()
+{
     IMGUI_CHECKVERSION();
     _imguiContext = ImGui::CreateContext();
     _implotContext = ImPlot::CreateContext();
@@ -76,33 +110,6 @@ bool Core::Initialize()
 
     ImGui_ImplOpenGL3_CreateFontsTexture();
     ImGui_ImplOpenGL3_CreateDeviceObjects();
-
-    _context = Context::Create();
-    if (_context == nullptr)
-    {
-        ::glfwTerminate();
-        return false;
-    }
-
-    InitializeEventCallback();
-
-    _timer = std::unique_ptr<Timer>(new Timer());
-    _ASSERT(_timer);
-    _timer->Initialize();
-
-	return true;
-}
-
-void Core::InitializeEventCallback()
-{
-    ::glfwSetWindowUserPointer(_window, _context.get());
-
-    ::glfwSetFramebufferSizeCallback(_window, OnFramebufferSizeCallback);
-    ::glfwSetKeyCallback(_window, OnKeyCallback);
-    ::glfwSetCursorPosCallback(_window, OnCursorPosCallback);
-    ::glfwSetMouseButtonCallback(_window, OnMouseButtonCallback);
-    ::glfwSetCharCallback(_window, OnCharCallback);
-    ::glfwSetScrollCallback(_window, OnScrollCallback);
 }
 
 void Core::Update()
@@ -111,8 +118,7 @@ void Core::Update()
 
     while (!::glfwWindowShouldClose(_window))
     {
-        _timer->Update();
-        RenderFPS();
+        Timer::GetInstance()->Update();
 
         //  Poll
         ::glfwPollEvents();
@@ -122,26 +128,39 @@ void Core::Update()
         ImGui::NewFrame();
 
         _context->ProcessInput(_window);
-
-        //  Render
-        _context->Render();
-        ImGui::Render();
-
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        ::glfwSwapBuffers(_window);
+        
+        Render();
     }
 
-    _context.reset();
-    ::glfwTerminate();
+    Clear();
+}
+
+//  Render
+void Core::Render()
+{
+    _context->Render();
+    ImGui::Render();
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    ::glfwSwapBuffers(_window);
+
+    RenderFPS();
 }
 
 void Core::RenderFPS()
 {
-    uint32_t fps = _timer->GetFPS();
+    uint32_t fps = Timer::GetInstance()->GetFPS();
 
     std::string title = "Opengl FPS : " + std::to_string(fps);
     glfwSetWindowTitle(_window, title.c_str());
+}
+
+void Core::Clear()
+{
+    SceneManager::GetInstance()->Clear();
+
+    ::glfwTerminate();
 }
 
 void Core::OnFramebufferSizeCallback(GLFWwindow* window, int width, int height)

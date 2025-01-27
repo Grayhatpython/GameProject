@@ -50,11 +50,3 @@ void Buffer::Bind() const
 	glBindBuffer(_target, _buffer);
 }
 
-std::unique_ptr<Buffer> Buffer::Create(uint32_t target, uint32_t usage, const void* data, size_t stride, size_t count)
-{
-    auto buffer = std::unique_ptr<Buffer>(new Buffer());
-    if (buffer->Initialize(target, usage, data, stride, count) == false)
-        return nullptr;
-
-    return std::move(buffer);
-}

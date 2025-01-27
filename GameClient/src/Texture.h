@@ -13,15 +13,11 @@
 class Image;
 class Texture 
 {
-private:
-    Texture() = default;
-
 public:
     ~Texture();
-    static std::unique_ptr<Texture> Create(const Image* image);
     void Bind() const;
 
-private:
+public:
     void Initialize(const Image* iBmage);
 
 public:

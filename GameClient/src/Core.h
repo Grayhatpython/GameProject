@@ -15,11 +15,15 @@ public:
 	bool Initialize();
 
 private:
+	bool InitializeGL();
+	void InitializeImGui();
 	void InitializeEventCallback();
 
 public:
 	void Update();
+	void Render();
 	void RenderFPS();
+	void Clear();
 
 public:
 	static void OnFramebufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -31,11 +35,9 @@ public:
 
 private:
 	GLFWwindow*					_window = nullptr;
-	std::unique_ptr<Context>	_context;
 	ImGuiContext*				_imguiContext = nullptr;
 	ImPlotContext*				_implotContext = nullptr;
 
-private:
-	//	TODO
-	std::unique_ptr<Timer>		_timer;
+	std::unique_ptr<Context>	_context;
+
 };

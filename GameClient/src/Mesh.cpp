@@ -4,8 +4,14 @@
 #include "Texture.h"
 
 //	Meterial
-void Material::SetProgram(const Program* program) const
+void Material::Update(const Program* program) const
 {
+	//	texture¸¦ shader program¿¡ Á¦°øÇÏ´Â ¹æ¹ý
+	//	glActiveTexture(textureSlot)			->	ÇöÀç ´Ù·ç°íÀÚ ÇÏ´Â texture slot ¼±ÅÃ
+	//	glBindTexture(textureType, textureID)	->	ÇöÀç ¼³Á¤ÁßÀÎ texture slot¿¡ texture object binding
+	//	glGetUniformLocation()					->	shader ³»ÀÇ sampler2D uniform handleÀ» ¾ò¾î¿Â´Ù.
+	//	glUniform1i()							->	sampler2D uniform¿¡ texture slot index ÀÔ·Â
+
 	int textureCount = 0;
 	if (_diffuse) 
 	{
@@ -25,123 +31,23 @@ void Material::SetProgram(const Program* program) const
 	program->SetUniform("material.shininess", _shininess);
 }
 
-
-//	Mesh
-std::unique_ptr<Mesh> Mesh::Create(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, uint32_t primitiveType)
-{
-	auto mesh = std::unique_ptr<Mesh>(new Mesh());
-	mesh->Initialize(vertices, indices, primitiveType);
-	return std::move(mesh);
-}
-
-std::unique_ptr<Mesh> Mesh::CreateBox()
-{
-
-	/*
-	//	x y z	: position
-	//	r g b	: color
-	//	s t		: texture coordinate
-	float vertices[] = {
-	  0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,	// top right
-	  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,	// bottom right
-	  -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-	  -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,	// top left
-	};
-
-	uint32_t indices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
-
-	// ì •ì ì´ 3ê°œ, ê° ì •ì ì˜ ìœ„ì¹˜, ìœ„ì¹˜ì— ëŒ€í•´ x/y/z ê°’, ê° ì¢Œí‘œê°’ë§ˆë‹¤ float(4byte) í¬ê¸°, ì •ì  ê°„ì˜ ê°„ê²©ì´ 12bytes
-	// vertexBuffer objectê°€ ê°€ì§„ ì •ì ì— ëŒ€í•œ êµ¬ì¡°ë¥¼ ì•Œë ¤ì¤˜ì•¼ í•œë‹¤!
-
-	// Vertex Arrray Object (VAO)
-	// ì •ì  ë°ì´í„°ì˜ êµ¬ì¡°ë¥¼ ì•Œë ¤ì£¼ëŠ” object
-
-	_vertexLayout = VertexLayout::Create();
-
-	_vertexBuffer = Buffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(vertices));
-	assert(_vertexBuffer);
-
-	// vertex buffer layout
-	// vertex shader -> layoutì„ ì‚¬ìš©í•˜ì—¬ attrib index ì§€ì •
-	// vertex shader out ë³€ìˆ˜ë“¤ì€ Rasterization ê³¼ì •ì„ ê±°ì³ í”½ì…€ë‹¨ìœ„ë¡œ ë³´ê°„ë˜ì–´ fragment shaderì˜ in ë³€ìˆ˜ë“¤ë¡œ ìž…ë ¥
-	// vertex -> x | y | z | r | g | b | s | t
-	// 0 attrib ( xyz, offset 0 )
-	_vertexLayout->EnableVertexAttribArray(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
-	// 1 attrib ( rgb, offset 12 )
-	_vertexLayout->EnableVertexAttribArray(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 3);
-	// 2 attrib ( st, offset 24 )
-	_vertexLayout->EnableVertexAttribArray(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, sizeof(float) * 6);
-
-	_indexBuffer = Buffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(indices));
-	assert(_indexBuffer);
-
-	*/
-
-	// pos.xyz, normal.xyz, texcoord.uv
-
-    std::vector<Vertex> vertices = {
-	  Vertex { glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f) },
-	  Vertex { glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 0.0f) },
-	  Vertex { glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f) },
-	  Vertex { glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 1.0f) },
-
-	  Vertex { glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f) },
-	  Vertex { glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 0.0f) },
-	  Vertex { glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f) },
-	  Vertex { glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 1.0f) },
-
-	  Vertex { glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
-	  Vertex { glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
-	  Vertex { glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
-	  Vertex { glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
-
-	  Vertex { glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
-	  Vertex { glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
-	  Vertex { glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
-	  Vertex { glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
-
-	  Vertex { glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
-	  Vertex { glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
-	  Vertex { glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
-	  Vertex { glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
-
-	  Vertex { glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
-	  Vertex { glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
-	  Vertex { glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
-	  Vertex { glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
-    };
-
-    std::vector<uint32_t> indices = {
-       0,  2,  1,  2,  0,  3,
-       4,  5,  6,  6,  7,  4,
-       8,  9, 10, 10, 11,  8,
-      12, 14, 13, 14, 12, 15,
-      16, 17, 18, 18, 19, 16,
-      20, 22, 21, 22, 20, 23,
-    };
-
-    return Create(vertices, indices, GL_TRIANGLES);
-}
-
-void Mesh::Render(const Program* program) const
+void Mesh::Render() const
 {
 	_vertexLayout->Bind();
-
-	if (_material) 
-		_material->SetProgram(program);
 
 	glDrawElements(_primitiveType, static_cast<GLsizei>(_indexBuffer->GetCount()), GL_UNSIGNED_INT, 0);
 }
 
 void Mesh::Initialize(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, uint32_t primitiveType)
 {
-	_vertexLayout = VertexLayout::Create();
-	_vertexBuffer = Buffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices.data(), sizeof(Vertex), vertices.size());
-	_indexBuffer = Buffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices.data(), sizeof(uint32_t), indices.size());
+	_vertexLayout = std::make_unique<VertexLayout>(new VertexLayout());
+	_vertexLayout->Initialize();
+
+	_vertexBuffer = std::make_shared<Buffer>();
+	_ASSERT(_vertexBuffer->Initialize(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices.data(), sizeof(Vertex), vertices.size()));
+	
+	_indexBuffer = std::make_shared<Buffer>();
+	_ASSERT(_indexBuffer->Initialize(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices.data(), sizeof(uint32_t), indices.size()));
 
 	//	0 attrib ( pos.xyz, offset 0 )
 	_vertexLayout->EnableVertexAttribArray(0, 3, GL_FLOAT, false, sizeof(Vertex), 0);

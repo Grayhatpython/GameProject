@@ -300,7 +300,7 @@ void Context::Render()
 		_box->Render(_program.get());
 
 		modelTransform =
-			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.7f, 2.0f)) *
+			glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.75f, 2.0f)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 1.5f, 1.5f));
 		transform = projection * view * modelTransform;
@@ -400,7 +400,6 @@ void Context::MouseButton(int button, int action, double x, double y)
 
 bool Context::Initialize()
 {
-
 	{
 		_program = Program::Create("../shader/lighting.vs", "../shader/lighting.fs");
 		if (_program == nullptr)
@@ -408,62 +407,6 @@ bool Context::Initialize()
 		_program2 = Program::Create("../shader/basic.vs", "../shader/basic.fs");
 		if (_program2 == nullptr)
 		  return false;
-	}
-
-	{
-		_box = Mesh::CreateBox();
-		_ASSERT(_box);
-		//_model = Model::Load("../model/backpack.obj");
-		//assert(_model);
-	}
-
-	{
-		//_material.diffuse = Texture::Create(Image::Load("../image/container2.png").get());
-		//_material.specular = Texture::Create(Image::Load("../image/container2_specular.png").get());
-
-		//_material._diffuse = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)).get());
-		//_material._specular = Texture::Create(Image::CreateSingleColorImage(4, 4, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
-
-		//	texture를 shader program에 제공하는 방법
-		//	glActiveTexture(textureSlot)			->	현재 다루고자 하는 texture slot 선택
-		//	glBindTexture(textureType, textureID)	->	현재 설정중인 texture slot에 texture object binding
-		//	glGetUniformLocation()					->	shader 내의 sampler2D uniform handle을 얻어온다.
-		//	glUniform1i()							->	sampler2D uniform에 texture slot index 입력
-
-		std::shared_ptr<Texture> darkGrayTexture = Texture::Create(Image::CreateSingleColorImage(4, 4,glm::vec4(0.2f, 0.2f, 0.2f, 1.0f)).get());
-		std::shared_ptr<Texture> grayTexture = Texture::Create(Image::CreateSingleColorImage(4, 4,glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)).get());
-
-		_planeMaterial = Material::Create();
-		_planeMaterial->_diffuse = Texture::Create(Image::Load("../image/marble.jpg").get());
-		_planeMaterial->_specular = grayTexture;
-		_planeMaterial->_shininess = 128.0f;
-
-		_box1Material = Material::Create();
-		_box1Material->_diffuse = Texture::Create(Image::Load("../image/container.jpg").get());
-		_box1Material->_specular = darkGrayTexture;
-		_box1Material->_shininess = 16.0f;
-
-		_box2Material = Material::Create();
-		_box2Material->_diffuse = Texture::Create(Image::Load("../image/container2.png").get());
-		_box2Material->_specular = Texture::Create(Image::Load("../image/container2_specular.png").get());
-		_box2Material->_shininess = 64.0f;
-	}
-
-	{	
-		/*
-		//	unifrom -> shader에서 사용할 수 있는 global 값 설정
-		//	fs uniform name
-
-		// x축으로 -55도 회전
-		auto model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		// 카메라는 원점으로부터 z축 방향으로 -3만큼 떨어짐
-		auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-		// 종횡비 4:3, 세로화각 45도의 원근 투영
-		auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH/ (float)WINDOW_HEIGHT, 0.01f, 10.0f);
-
-		auto transform = projection * view * model;
-		_program->SetUniform("transform", transform);
-		*/
 	}
 
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);

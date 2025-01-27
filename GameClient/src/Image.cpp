@@ -2,26 +2,16 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-std::unique_ptr<Image> Image::Load(const std::string& filepath)
+bool Image::Create(int width, int height, int channelCount)
 {
-	auto image = std::unique_ptr<Image>(new Image());
-	if (image->LoadFromFile(filepath) == false)
-		return nullptr;
+	if (Allocate(width, height, channelCount) == false)
+		return false;
 
-	return std::move(image);
-}
-
-std::unique_ptr<Image> Image::Create(int width, int height, int channelCount)
-{
-	auto image = std::unique_ptr<Image>(new Image());
-	if (image->Allocate(width, height, channelCount) == false)
-		return nullptr;
-
-	return std::move(image);
+	return true;
 }
 
 //	단일 컬러 이미지
-std::unique_ptr<Image> Image::CreateSingleColorImage(int width, int height, const glm::vec4& color)
+bool Image::CreateSingleColorImage(int width, int height, const glm::vec4& color)
 {
 	glm::vec4 clamped = glm::clamp(color * 255.0f, 0.0f, 255.0f);
 	uint8_t rgba[4] = {
@@ -30,11 +20,15 @@ std::unique_ptr<Image> Image::CreateSingleColorImage(int width, int height, cons
 	  (uint8_t)clamped.b,
 	  (uint8_t)clamped.a,
 	};
-	auto image = Create(width, height, 4);
+
+	if (Create(width, height, 4) == false)
+		return false;
+
 	for (int i = 0; i < width * height; i++) {
-		memcpy(image->_data + 4 * i, rgba, 4);
+		::memcpy(_data + 4 * i, rgba, 4);
 	}
-	return std::move(image);
+
+	return true;
 }
 
 Image::~Image()
