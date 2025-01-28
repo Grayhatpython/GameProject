@@ -72,36 +72,6 @@
     <ClCompile Include="DataManager.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
-    <ClCompile Include="imgui.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_demo.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_draw.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_glfw.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_opengl3.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_tables.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="implot.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="implot_demo.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="implot_items.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -151,39 +121,6 @@
     </ClInclude>
     <ClInclude Include="DataManager.h">
       <Filter>GameContents</Filter>
-    </ClInclude>
-    <ClInclude Include="imconfig.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_glfw.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3_loader.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_internal.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="implot.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="implot_internal.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_rectpack.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_textedit.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_truetype.h">
-      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

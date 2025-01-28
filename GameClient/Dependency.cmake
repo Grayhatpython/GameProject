@@ -162,6 +162,17 @@ add_dependencies(implot imgui)
 
 target_link_libraries(implot PRIVATE imgui)
 
+# DEP_LIST -> dep-spdlog dep-glfw dep-glad dep-stb dep-glm imgui implot
+# DEP_LIBS -> spdlogd(Debug) glfw3 glad imgui implot
+
+#[[
+${CMAKE_CURRENT_SOURCE_DIR}: 현재 CMakeLists.txt 파일이 있는 디렉토리.
+${CMAKE_CURRENT_BINARY_DIR}: 현재 디렉토리에 빌드된 파일이 생성되는 디렉토리.
+${CMAKE_SOURCE_DIR}: 프로젝트의 최상위 디렉토리.
+${CMAKE_BINARY_DIR}: 프로젝트의 최상위 빌드 디렉토리.
+]]
+
+#[[
 # protobuf
 # 클라이언트 작업 후에 서버랑 연동 시에 수정 필요...
 set(PROTOBUF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/protobuf)
@@ -185,6 +196,35 @@ set(DEP_INCLUDE_DIR ${DEP_INCLUDE_DIR} ${PROTOBUF_INCLUDE_DIR})
 
 set(DEP_LIB_DIR ${DEP_LIB_DIR} ${PROTOBUF_LIB_DIR})
 set(DEP_LIBS ${DEP_LIBS} libprotobuf$<$<CONFIG:Debug>:d>)
+]]
 
-# DEP_LIST -> dep-spdlog dep-glfw dep-glad dep-stb dep-glm imgui implot
-# DEP_LIBS -> spdlogd(Debug) glfw3 glad imgui implot
+# protobuf
+set(PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
+set(PROTOBUF_INCLUDE_DIR ${PARENT_DIR}/Libraries/Include)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(PROTOBUF_LIB_DIR ${PARENT_DIR}/Libraries/lib/Protobuf/Debug)
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(PROTOBUF_LIB_DIR ${PARENT_DIR}/Libraries/lib/Protobuf/Release)
+else()
+    set(PROTOBUF_LIB_DIR ${PARENT_DIR}/Libraries/lib/Protobuf/$<CONFIG>)
+endif()
+
+set(DEP_INCLUDE_DIR ${DEP_INCLUDE_DIR} ${PROTOBUF_INCLUDE_DIR})
+set(DEP_LIB_DIR ${DEP_LIB_DIR} ${PROTOBUF_LIB_DIR})
+set(DEP_LIBS ${DEP_LIBS} libprotobuf$<$<CONFIG:Debug>:d>)
+
+# server Core
+set(SERVER_CORE_INCLUDE_DIR ${PARENT_DIR}/ServerCore)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(SERVER_CORE_LIB_DIR ${PARENT_DIR}/Libraries/lib/ServerCore/Debug)
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(SERVER_CORE_LIB_DIR ${PARENT_DIR}/Libraries/lib/ServerCore/Release)
+else()
+    set(SERVER_CORE_LIB_DIR ${PARENT_DIR}/Libraries/lib/ServerCore/$<CONFIG>)
+endif()
+
+set(DEP_INCLUDE_DIR ${DEP_INCLUDE_DIR} ${SERVER_CORE_INCLUDE_DIR})
+set(DEP_LIB_DIR ${DEP_LIB_DIR} ${SERVER_CORE_LIB_DIR})
+set(DEP_LIBS ${DEP_LIBS} ServerCore>)
