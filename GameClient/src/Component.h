@@ -4,6 +4,7 @@ enum class ComponentType : uint8_t
 {
 	Transform,
 	MeshRenderer,
+	Camera,
 	MonoBehaviour,
 	End,
 };

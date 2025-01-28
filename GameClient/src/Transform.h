@@ -10,6 +10,7 @@ public:
 
 public:
 	virtual void FinalUpdate() override;
+	void Push();
 
 public:
 	const glm::vec3&				GetLocalPosition() { return _localPosition; }

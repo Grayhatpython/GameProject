@@ -5,6 +5,8 @@
 #include "MeshRenderer.h"
 #include "Image.h"
 #include "Texture.h"
+#include "Transform.h"
+#include "Camera.h"
 
 std::shared_ptr<SceneManager>	SceneManager::S_Instance = nullptr;
 std::once_flag					SceneManager::S_InitializeFlag;
@@ -17,6 +19,10 @@ void SceneManager::Update()
 	_currentScene->Update();
 	_currentScene->LateUpdate();
 	_currentScene->FinalUpdate();
+}
+
+void SceneManager::Render()
+{
 }
 
 void SceneManager::Clear()
@@ -34,9 +40,9 @@ void SceneManager::LoadScene(const std::wstring& sceneName)
 		std::shared_ptr<GameObject> box1 = std::make_shared<GameObject>();
 		std::shared_ptr<GameObject> box2 = std::make_shared<GameObject>();
 
-		container->Initialize();
-		box1->Initialize();
-		box2->Initialize();
+		container->AddComponent(std::make_shared<Transform>());
+		box1->AddComponent(std::make_shared<Transform>());
+		box2->AddComponent(std::make_shared<Transform>());
 
 		std::shared_ptr<MeshRenderer> containerMeshRenderer = std::make_shared<MeshRenderer>();
 		std::shared_ptr<MeshRenderer> box1MeshRenderer = std::make_shared<MeshRenderer>();
@@ -194,6 +200,11 @@ void SceneManager::LoadScene(const std::wstring& sceneName)
 		_currentScene->AddGameObject(container);
 		_currentScene->AddGameObject(box1);
 		_currentScene->AddGameObject(box2);
+
+		auto camera = std::make_shared<GameObject>();
+		camera->AddComponent(std::make_shared<Transform>());
+		camera->AddComponent(std::make_shared<Camera>());
+		//camera->AddComponent(std::make_shared<MeshRenderer>());
 	}
 
 	_currentScene->Awake();

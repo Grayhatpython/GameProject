@@ -17,7 +17,7 @@ private:
     Material() = default;
 
 public:
-    void Update(const Program* program) const;
+    void Push(const Program* program) const;
 
 public:
     std::shared_ptr<Texture>    _diffuse;

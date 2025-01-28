@@ -13,11 +13,6 @@ GameObject::~GameObject()
 
 }
 
-void GameObject::Initialize()
-{
-	AddComponent(std::make_shared<Transform>());
-}
-
 void GameObject::Awake()
 {
 	for (auto& component : _components)
@@ -88,6 +83,25 @@ void GameObject::AddComponent(std::shared_ptr<Component> component)
 
 std::shared_ptr<Transform> GameObject::GetTransform()
 {
-	uint8_t index = static_cast<uint8_t>(ComponentType::Transform);
-	return std::static_pointer_cast<Transform>(_components[index]);
+	auto component = GetComponent(ComponentType::Transform);
+	return std::static_pointer_cast<Transform>(component);
+}
+
+std::shared_ptr<MeshRenderer> GameObject::GetMeshRenderer()
+{
+	auto component = GetComponent(ComponentType::MeshRenderer);
+	return std::static_pointer_cast<MeshRenderer>(component);
+}
+
+std::shared_ptr<Camera> GameObject::GetCamera()
+{
+	auto component = GetComponent(ComponentType::Camera);
+	return std::static_pointer_cast<Camera>(component);
+}
+
+std::shared_ptr<Component> GameObject::GetComponent(ComponentType type)
+{
+	uint8_t index = static_cast<uint8_t>(type);
+	_ASSERT(index < COMPONENT_COUNT);
+	return _components[index];
 }

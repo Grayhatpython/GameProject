@@ -35,6 +35,7 @@ add_executable(${PROJECT_NAME}
     src/MeshRenderer.cpp        src/MeshRenderer.h
     src/SceneManager.cpp        src/SceneManager.h
     src/Scene.cpp               src/Scene.h
+    src/Camera.cpp              src/Camera.h
 )
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC src/pch.h)
