@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.20)
 
 set(PROJECT_NAME GameClient)
 set(CMAKE_CXX_STANDARD 17)
@@ -38,9 +38,15 @@ add_executable(${PROJECT_NAME}
     src/Camera.cpp              src/Camera.h
 )
 
-target_precompile_headers(${PROJECT_NAME} PUBLIC src/pch.h)
+# Precompiled header (필요한 경우만 유지)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/pch.h")
+    target_precompile_headers(${PROJECT_NAME} PUBLIC src/pch.h)
+endif()
 
-include(Dependency.cmake)
+# 의존성 포함
+message(STATUS "Trying to include Dependency.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/Dependency.cmake")
+message(STATUS "Dependency.cmake included successfully")
 
 # PUBLIC -> 해당 target에 의존성을 가지는 또 다른 타겟
 # Ex) target이 라이브러리이고, 이 라이브러리를 링크하는 어플리케이션에도 동일한 정의가 적용
@@ -60,6 +66,9 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     WINDOW_WIDTH=${WINDOW_WIDTH}
     WINDOW_HEIGHT=${WINDOW_HEIGHT}
 )
+
+# 디버깅 용도로 dependencies 출력
+message(STATUS "Dependencies: ${DEP_LIST}")
 
 # Dependency들이 먼저 build 될 수 있게 관계 설정
 add_dependencies(${PROJECT_NAME} ${DEP_LIST})

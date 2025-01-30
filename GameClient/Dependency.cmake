@@ -1,4 +1,6 @@
 
+message(STATUS "Dependency.cmake: Start")
+
 include(ExternalProject)
 
 # PROJECT_BINARY_DIR - > build Folder
@@ -8,17 +10,26 @@ set(DEP_EXTERNAL_DIR ${PROJECT_BINARY_DIR}/external)
 set(DEP_INCLUDE_DIR ${DEP_EXTERNAL_DIR}/include)
 set(DEP_LIB_DIR ${DEP_EXTERNAL_DIR}/lib)
 
+message(STATUS "Before adding spdlog")
 # spdlog: fast logger library
 ExternalProject_Add(
     dep-spdlog
     GIT_REPOSITORY "https://github.com/gabime/spdlog.git"
     GIT_TAG "v1.x"
-    GIT_SHALLOW 1
+    # GIT_SHALLOW 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_EXTERNAL_DIR}
     TEST_COMMAND ""
+    TIMEOUT 30
+    LOG_DOWNLOAD ON
+    LOG_CONFIGURE ON
+    LOG_BUILD ON
+    LOG_INSTALL ON
+    LOG_OUTPUT_ON_FAILURE ON
 )
+message(STATUS "After adding spdlog")
+
 # Dependency 리스트 및 라이브러리 파일 리스트 추가
 set(DEP_LIST ${DEP_LIST} dep-spdlog)
 set(DEP_LIBS ${DEP_LIBS} spdlog$<$<CONFIG:Debug>:d>)
@@ -129,6 +140,7 @@ set(DEP_LIBS ${DEP_LIBS} assimp-vc143-mt$<$<CONFIG:Debug>:d>
 # imgui
 # target name 
 # No Update So Only Cpp file 
+# ImGui 추가
 add_library(imgui
     imgui/imgui_draw.cpp
     imgui/imgui_tables.cpp
@@ -136,30 +148,32 @@ add_library(imgui
     imgui/imgui.cpp
     imgui/imgui_impl_glfw.cpp
     imgui/imgui_impl_opengl3.cpp
-    )
+)
 
+# Include 디렉토리 설정
 target_include_directories(imgui PRIVATE ${DEP_INCLUDE_DIR})
-add_dependencies(imgui ${DEP_LIST})
+list(APPEND DEP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
 
-set(DEP_INCLUDE_DIR ${DEP_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+# Dependency 리스트 추가
+list(APPEND DEP_LIST imgui)
+list(APPEND DEP_LIBS imgui)
 
-set(DEP_LIST ${DEP_LIST} imgui)
-set(DEP_LIBS ${DEP_LIBS} imgui)
-
-# implot
+# ImPlot 추가
 add_library(implot
     implot/implot_items.cpp
     implot/implot.cpp
-    )
+)
 
-set(DEP_INCLUDE_DIR ${DEP_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/implot)
+# Include 디렉토리 설정
+list(APPEND DEP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/implot)
+target_include_directories(implot PRIVATE ${DEP_INCLUDE_DIR})
 
-set(DEP_LIST ${DEP_LIST} implot)
-set(DEP_LIBS ${DEP_LIBS} implot)
+# Dependency 설정
+list(APPEND DEP_LIST implot)
+list(APPEND DEP_LIBS implot)
 
-target_include_directories(implot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+# implot이 imgui에 의존하도록 설정
 add_dependencies(implot imgui)
-
 target_link_libraries(implot PRIVATE imgui)
 
 # DEP_LIST -> dep-spdlog dep-glfw dep-glad dep-stb dep-glm imgui implot
@@ -228,3 +242,5 @@ endif()
 set(DEP_INCLUDE_DIR ${DEP_INCLUDE_DIR} ${SERVER_CORE_INCLUDE_DIR})
 set(DEP_LIB_DIR ${DEP_LIB_DIR} ${SERVER_CORE_LIB_DIR})
 set(DEP_LIBS ${DEP_LIBS} ServerCore>)
+
+message(STATUS "Dependency.cmake: End")
