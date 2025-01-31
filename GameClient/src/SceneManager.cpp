@@ -7,9 +7,27 @@
 #include "Texture.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "CameraController.h"
+#include "Program.h"
 
 std::shared_ptr<SceneManager>	SceneManager::S_Instance = nullptr;
 std::once_flag					SceneManager::S_InitializeFlag;
+
+//	TODO : Scene º°·Î
+bool SceneManager::Initialize()
+{
+	_program = std::make_shared<Program>();
+	if (_program->Initialize("../shader/lighting.vs", "../shader/lighting.fs") == false)
+		return false;
+
+	_program2 = std::make_shared<Program>();
+	if (_program2->Initialize("../shader/basic.vs", "../shader/basic.fs") == false)
+		return false;
+
+	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+
+	return true;
+}
 
 void SceneManager::Update()
 {
@@ -23,11 +41,22 @@ void SceneManager::Update()
 
 void SceneManager::Render()
 {
+	if (_currentScene == nullptr)
+		return;
+
+	const std::vector<std::shared_ptr<GameObject>>& gameObjects = _currentScene->GetGameObjects();
+	for (const auto& gameObject : gameObjects)
+	{
+		if (gameObject->GetCamera() == nullptr)
+			continue;
+
+		gameObject->GetCamera()->Render();
+	}
 }
 
 void SceneManager::Clear()
 {
-
+	//	TODO
 }
 
 //	TODO : TEST
@@ -204,7 +233,9 @@ void SceneManager::LoadScene(const std::wstring& sceneName)
 		auto camera = std::make_shared<GameObject>();
 		camera->AddComponent(std::make_shared<Transform>());
 		camera->AddComponent(std::make_shared<Camera>());
-		//camera->AddComponent(std::make_shared<MeshRenderer>());
+		camera->AddComponent(std::make_shared<CameraController>());
+		camera->GetTransform()->SetLocalPosition(glm::vec3(0.0f, 2.5f, 8.0f));
+		_currentScene->AddGameObject(camera);
 	}
 
 	_currentScene->Awake();

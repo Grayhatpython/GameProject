@@ -1,32 +1,28 @@
 #include "Program.h"
 #include "Shader.h"
 
-std::unique_ptr<Program> Program::Create(const std::vector<std::shared_ptr<Shader>>& shaders)
-{
-	auto program = std::unique_ptr<Program>(new Program());
-
-	if (program->IsProgramLink(shaders) == false)
-		return nullptr;
-
-	return std::move(program);
-}
-
-std::unique_ptr<Program> Program::Create(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
-{
-	std::shared_ptr<Shader> vs = Shader::CreateFromFile(vertexShaderFilename,GL_VERTEX_SHADER);
-	std::shared_ptr<Shader> fs = Shader::CreateFromFile(fragmentShaderFilename,GL_FRAGMENT_SHADER);
-	if (vs == nullptr || fs == nullptr)
-		return nullptr;
-
-	return std::move(Create({ vs, fs }));
-}
-
 Program::~Program()
 {
 	if (_program)
 	{
 		glDeleteProgram(_program);
 	}
+}
+
+bool Program::Initialize(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+{
+	std::shared_ptr<Shader> vs = std::make_shared<Shader>();
+	if (vs->Initialize(vertexShaderFilename, GL_VERTEX_SHADER) == false)
+		return false;
+	
+	std::shared_ptr<Shader> fs = std::make_shared<Shader>();
+	if (vs->Initialize(fragmentShaderFilename, GL_FRAGMENT_SHADER) == false)
+		return false;
+
+	if (IsProgramLink({vs, fs}) == false)
+		return false;
+
+	return true);
 }
 
 bool Program::IsProgramLink(const std::vector<std::shared_ptr<Shader>>& shaders)

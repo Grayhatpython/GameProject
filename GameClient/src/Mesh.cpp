@@ -4,7 +4,7 @@
 #include "Texture.h"
 
 //	Meterial
-void Material::Push(const Program* program) const
+void Material::PushData(const std::shared_ptr<Program>& program)
 {
 	//	texture를 shader program에 제공하는 방법
 	//	glActiveTexture(textureSlot)			->	현재 다루고자 하는 texture slot 선택

@@ -37,6 +37,7 @@ bool Core::Initialize()
     _context = std::make_unique<Context>(new Context());
     _context->Initialize();
    
+    _ASSERT(SceneManager::GetInstance()->Initialize());
     SceneManager::GetInstance()->LoadScene(L"Dev");
     Timer::GetInstance()->Initialize();
 
@@ -68,7 +69,6 @@ bool Core::InitializeGL()
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     ::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //::glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
 
     _window = ::glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
     if (_window == nullptr)

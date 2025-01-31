@@ -40,12 +40,10 @@ Shader::~Shader()
 	}
 }
 
-std::unique_ptr<Shader> Shader::CreateFromFile(const std::string& fileName, GLenum shaderType)
+bool Shader::Initialize(const std::string& fileName, GLenum shaderType)
 {
-	auto shader = std::unique_ptr<Shader>(new Shader());
+	if (IsLoadFromFile(fileName, shaderType) == false)
+		return false;
 
-	if (shader->IsLoadFromFile(fileName, shaderType) == false)
-		return nullptr;
-
-	return std::move(shader);
+	return true;
 }

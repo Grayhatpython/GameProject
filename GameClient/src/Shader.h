@@ -2,15 +2,16 @@
 
 class Shader
 {
-private:
-	Shader() = default;
-
-	bool IsLoadFromFile(const std::string& fileName, GLenum shaderType);
-
 public:
+	Shader() = default;
 	~Shader();
 
-	static std::unique_ptr<Shader> CreateFromFile(const std::string& fileName, GLenum shaderType);
+public:
+	bool Initialize(const std::string& fileName, GLenum shaderType);
+
+private:
+	bool IsLoadFromFile(const std::string& fileName, GLenum shaderType);
+
 
 public:
 	uint32_t	GetID() const { return _shader; }

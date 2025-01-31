@@ -2,6 +2,7 @@
 #include "Component.h"
 
 class Mesh;
+class Program;
 class Material;
 
 class MeshRenderer : public Component
@@ -11,10 +12,7 @@ public:
 	virtual ~MeshRenderer();
 
 public:
-	void Render();
-
-	//	TODO
-	virtual void Update() override { Render(); }
+	void Render(const std::shared_ptr<Program>& program);
 
 public:
 	void SetMesh(std::shared_ptr<Mesh> mesh) { _mesh = mesh; }

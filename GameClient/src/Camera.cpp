@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
+#include "Program.h"
 
 glm::mat4 Camera::S_ViewMatrix;
 glm::mat4 Camera::S_ProjectionMatrix;
@@ -38,7 +39,7 @@ void Camera::FinalUpdate()
 	S_ProjectionMatrix = _projectionMatrix;
 }
 
-void Camera::Render()
+void Camera::Render(const std::shared_ptr<Program>& program)
 {
 	auto scene = SceneManager::GetInstance()->GetCurrentScene();
 
@@ -50,6 +51,6 @@ void Camera::Render()
 		if (meshRenderer == nullptr)
 			continue;
 
-		meshRenderer->Render();
+		meshRenderer->Render(program);
 	}
 }

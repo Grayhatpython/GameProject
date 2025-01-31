@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 
+class Program;
 enum class ProjectionType
 {
 	Perspective,	//	¿ø±Ù
@@ -16,7 +17,8 @@ public:
 public:
 	virtual void	FinalUpdate() override;
 
-	void			Render();
+	//	TODO	
+	void			Render(const std::shared_ptr<Program>& program);
 
 private:
 	ProjectionType _type = ProjectionType::Perspective;

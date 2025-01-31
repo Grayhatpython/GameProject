@@ -4,12 +4,13 @@ class Shader;
 class Program
 {
 public:
-	static std::unique_ptr<Program> Create(const std::vector<std::shared_ptr<Shader>>& shaders);
-	static std::unique_ptr<Program> Create(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+	Program() = default;
 	~Program();
 
+public:
+	bool Initialize(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+
 private:
-	Program() = default;
 	bool IsProgramLink(const std::vector<std::shared_ptr<Shader>>& shaders);
 
 public:

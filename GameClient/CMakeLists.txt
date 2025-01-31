@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME}
     src/SceneManager.cpp        src/SceneManager.h
     src/Scene.cpp               src/Scene.h
     src/Camera.cpp              src/Camera.h
+    src/CameraController.cpp    src/CameraController.h
 )
 
 # Precompiled header (필요한 경우만 유지)
@@ -51,6 +52,7 @@ message(STATUS "Dependency.cmake included successfully")
 # PUBLIC -> 해당 target에 의존성을 가지는 또 다른 타겟
 # Ex) target이 라이브러리이고, 이 라이브러리를 링크하는 어플리케이션에도 동일한 정의가 적용
 # PRIVATE -> 해당 target에만 적용
+
 
 # 우리 프로젝트에 include / lib 관련 옵션 추가
 # DEP_INCLUDE_DIR -> build/include

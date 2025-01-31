@@ -17,7 +17,7 @@ private:
     Material() = default;
 
 public:
-    void Push(const Program* program) const;
+    void PushData(const std::shared_ptr<Program>& program);
 
 public:
     std::shared_ptr<Texture>    _diffuse;

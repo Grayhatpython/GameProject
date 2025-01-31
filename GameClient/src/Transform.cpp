@@ -40,11 +40,9 @@ void Transform::FinalUpdate()
 	std::shared_ptr<Transform> parent = GetParent().lock();
 	if (parent != nullptr)
 		_worldMatrix *= parent->GetLocalToWorldMatrix();
-
-
 }
 
-void Transform::Push()
+void Transform::PushData()
 {
 	//	TODO
 	//_worldMatrix* Camera::S_ViewMatrix* Camera::S_ProjectionMatrix;

@@ -1,6 +1,7 @@
 #pragma once
 
 class Scene;
+class Program;
 class SceneManager
 {
 private:
@@ -21,6 +22,7 @@ public:
 	SceneManager& operator=(const SceneManager&) = delete;
 
 public:
+	bool Initialize();
 	void Update();
 	void Render();
 	void Clear();
@@ -36,6 +38,12 @@ private:
 
 private:
 	std::shared_ptr<Scene>		_currentScene;
+
+	//	light 
+	std::shared_ptr<Program>	_program;
+	//	basic
+	std::shared_ptr<Program>	_program2;
+
 };
 
 
